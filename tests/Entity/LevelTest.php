@@ -152,8 +152,6 @@ class LevelTest extends TestCase
         $level->setLevel(3);
         
         $result = $level->retrieveAdminArray();
-        
-        $this->assertIsArray($result);
         $this->assertArrayHasKey('level', $result);
         $this->assertArrayHasKey('title', $result);
         $this->assertArrayHasKey('id', $result);

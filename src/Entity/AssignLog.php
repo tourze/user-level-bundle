@@ -10,19 +10,13 @@ use Tourze\DoctrineSnowflakeBundle\Service\SnowflakeIdGenerator;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 use Tourze\DoctrineUserBundle\Attribute\CreatedByColumn;
 use Tourze\DoctrineUserBundle\Attribute\UpdatedByColumn;
-use Tourze\EasyAdmin\Attribute\Column\ExportColumn;
-use Tourze\EasyAdmin\Attribute\Column\ListColumn;
-use Tourze\EasyAdmin\Attribute\Permission\AsPermission;
 use UserLevelBundle\Repository\AssignLogRepository;
 
-#[AsPermission(title: '升降级记录')]
 #[ORM\Entity(repositoryClass: AssignLogRepository::class)]
 #[ORM\Table(name: 'user_level_assign_log', options: ['comment' => '用户等级升降级记录'])]
 class AssignLog implements AdminArrayInterface
 {
     use TimestampableAware;
-    #[ExportColumn]
-    #[ListColumn(order: -1, sorter: true)]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(SnowflakeIdGenerator::class)]
@@ -37,7 +31,6 @@ class AssignLog implements AdminArrayInterface
     #[ORM\JoinColumn(nullable: false)]
     private ?Level $oldLevel = null;
 
-    #[ListColumn(title: '客户')]
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?UserInterface $user = null;
@@ -45,18 +38,16 @@ class AssignLog implements AdminArrayInterface
     #[ORM\Column(type: Types::SMALLINT, options: ['comment' => '类型0降级，1升级'])]
     private int $type;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true, options: ['comment' => ''])]
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true, options: ['comment' => ''])]
     private ?\DateTimeInterface $assignTime = null;
 
     #[ORM\Column(type: Types::STRING, length: 100, options: ['comment' => '备注', 'default' => ''])]
     private string $remark;
 
     #[CreatedByColumn]
-    #[ORM\Column(nullable: true, options: ['comment' => '创建人'])]
     private ?string $createdBy = null;
 
     #[UpdatedByColumn]
-    #[ORM\Column(nullable: true, options: ['comment' => '更新人'])]
     private ?string $updatedBy = null;
 
     public function getId(): ?string

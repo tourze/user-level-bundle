@@ -147,8 +147,6 @@ class AssignLogTest extends TestCase
         $log->setCreateTime($createTime);
         
         $result = $log->retrieveAdminArray();
-        
-        $this->assertIsArray($result);
         $this->assertArrayHasKey('newLevelInfo', $result);
         $this->assertArrayHasKey('oldLevelInfo', $result);
         $this->assertArrayHasKey('userInfo', $result);
