@@ -36,7 +36,7 @@ class GetLevelLogsByBizUserId extends BaseProcedure
     {
         $user = $this->userLoader->loadUserByIdentifier($this->userId);
         $qb = $this->repository->createQueryBuilder('a');
-        if (!$this->userId) {
+        if ($this->userId !== '') {
             $qb->andWhere('a.user = :user')->setParameter('user', $user);
         }
         $qb->orderBy('a.id', 'DESC');

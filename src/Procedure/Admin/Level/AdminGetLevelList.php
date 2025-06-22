@@ -33,7 +33,7 @@ class AdminGetLevelList extends BaseProcedure
     public function execute(): array
     {
         $qb = $this->repository->createQueryBuilder('a');
-        if ($this->title) {
+        if ($this->title !== '') {
             $qb->andWhere('a.title like :title')->setParameter('title', "%{$this->title}%");
         }
         $qb->orderBy('a.id', 'DESC');

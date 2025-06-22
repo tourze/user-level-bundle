@@ -9,8 +9,7 @@ use Symfony\Component\Serializer\Attribute\Ignore;
 use Tourze\DoctrineSnowflakeBundle\Service\SnowflakeIdGenerator;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 use Tourze\DoctrineTrackBundle\Attribute\TrackColumn;
-use Tourze\DoctrineUserBundle\Attribute\CreatedByColumn;
-use Tourze\DoctrineUserBundle\Attribute\UpdatedByColumn;
+use Tourze\DoctrineUserBundle\Traits\BlameableAware;
 use UserLevelBundle\Repository\UpgradeRuleRepository;
 
 #[ORM\Entity(repositoryClass: UpgradeRuleRepository::class)]
@@ -18,6 +17,7 @@ use UserLevelBundle\Repository\UpgradeRuleRepository;
 class UpgradeRule implements Stringable
 {
     use TimestampableAware;
+    use BlameableAware;
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(SnowflakeIdGenerator::class)]
@@ -38,11 +38,6 @@ class UpgradeRule implements Stringable
     #[TrackColumn]
     private ?bool $valid = false;
 
-    #[CreatedByColumn]
-    private ?string $createdBy = null;
-
-    #[UpdatedByColumn]
-    private ?string $updatedBy = null;
 
     public function getId(): ?string
     {
@@ -91,31 +86,8 @@ class UpgradeRule implements Stringable
         return $this;
     }
 
-    public function setCreatedBy(?string $createdBy): self
-    {
-        $this->createdBy = $createdBy;
-
-        return $this;
-    }
-
-    public function getCreatedBy(): ?string
-    {
-        return $this->createdBy;
-    }
-
-    public function setUpdatedBy(?string $updatedBy): self
-    {
-        $this->updatedBy = $updatedBy;
-
-        return $this;
-    }
-
-    public function getUpdatedBy(): ?string
-    {
-        return $this->updatedBy;
-    }
     public function __toString(): string
     {
-        return (string) $this->id;
+        return $this->title ?? 'UpgradeRule#' . ($this->id ?? 'new');
     }
 }

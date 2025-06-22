@@ -32,7 +32,7 @@ class AdminDeleteLevel extends BaseProcedure
     public function execute(): array
     {
         $record = $this->repository->findOneBy(['id' => $this->id]);
-        if (!$record) {
+        if ($record === null) {
             throw new ApiException('记录不存在');
         }
 

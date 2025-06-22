@@ -8,21 +8,17 @@ use PHPUnit\Framework\TestCase;
 use Tourze\JsonRPC\Core\Exception\ApiException;
 use UserLevelBundle\Entity\Level;
 use UserLevelBundle\Procedure\Admin\Level\AdminCreateLevel;
-use UserLevelBundle\Repository\LevelRepository;
 
 class AdminCreateLevelTest extends TestCase
 {
     private AdminCreateLevel $procedure;
-    private \PHPUnit\Framework\MockObject\MockObject|LevelRepository $levelRepository;
     private \PHPUnit\Framework\MockObject\MockObject|EntityManagerInterface $entityManager;
 
     protected function setUp(): void
     {
-        $this->levelRepository = $this->createMock(LevelRepository::class);
         $this->entityManager = $this->createMock(EntityManagerInterface::class);
 
         $this->procedure = new AdminCreateLevel(
-            $this->levelRepository,
             $this->entityManager
         );
     }
@@ -52,7 +48,6 @@ class AdminCreateLevelTest extends TestCase
         $result = $this->procedure->execute();
 
         // 验证返回值
-        $this->assertIsArray($result);
         $this->assertArrayHasKey('__message', $result);
         $this->assertEquals('创建成功', $result['__message']);
     }
@@ -111,7 +106,6 @@ class AdminCreateLevelTest extends TestCase
         $result = $this->procedure->execute();
 
         // 验证返回值
-        $this->assertIsArray($result);
         $this->assertArrayHasKey('__message', $result);
         $this->assertEquals('创建成功', $result['__message']);
     }

@@ -10,16 +10,15 @@ use Tourze\Arrayable\AdminArrayInterface;
 use Tourze\DoctrineSnowflakeBundle\Service\SnowflakeIdGenerator;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 use Tourze\DoctrineTrackBundle\Attribute\TrackColumn;
-use Tourze\DoctrineUserBundle\Attribute\CreatedByColumn;
-use Tourze\DoctrineUserBundle\Attribute\UpdatedByColumn;
-use Tourze\EasyAdmin\Attribute\Action\CurdAction;
+use Tourze\DoctrineUserBundle\Traits\BlameableAware;
 use UserLevelBundle\Repository\LevelRepository;
 
 #[ORM\Entity(repositoryClass: LevelRepository::class)]
 #[ORM\Table(name: 'biz_user_level', options: ['comment' => '用户等级'])]
-class Level implements AdminArrayInterface
+class Level implements AdminArrayInterface, \Stringable
 {
     use TimestampableAware;
+    use BlameableAware;
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(SnowflakeIdGenerator::class)]
@@ -32,18 +31,12 @@ class Level implements AdminArrayInterface
     #[ORM\Column(type: Types::SMALLINT, unique: true, options: ['comment' => '等级值'])]
     private int $level;
 
-    #[CurdAction(label: '升级规则')]
     #[ORM\OneToMany(targetEntity: UpgradeRule::class, mappedBy: 'userLevel', cascade: ['persist'], orphanRemoval: true)]
     private Collection $upgradeRules;
 
     #[TrackColumn]
     private ?bool $valid = false;
 
-    #[CreatedByColumn]
-    private ?string $createdBy = null;
-
-    #[UpdatedByColumn]
-    private ?string $updatedBy = null;
 
     public function __construct()
     {
@@ -113,34 +106,17 @@ class Level implements AdminArrayInterface
         return $this;
     }
 
-    public function setCreatedBy(?string $createdBy): self
-    {
-        $this->createdBy = $createdBy;
-
-        return $this;
-    }
-
-    public function getCreatedBy(): ?string
-    {
-        return $this->createdBy;
-    }
-
-    public function setUpdatedBy(?string $updatedBy): self
-    {
-        $this->updatedBy = $updatedBy;
-
-        return $this;
-    }
-
-    public function getUpdatedBy(): ?string
-    {
-        return $this->updatedBy;
-    }public function retrieveAdminArray(): array
+    public function retrieveAdminArray(): array
     {
         return [
             'level' => $this->getLevel(),
             'title' => $this->getTitle(),
             'id' => $this->getId(),
         ];
+    }
+    
+    public function __toString(): string
+    {
+        return $this->title ?? 'Level#' . ($this->id ?? 'new');
     }
 }

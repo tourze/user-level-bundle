@@ -8,15 +8,15 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Tourze\Arrayable\AdminArrayInterface;
 use Tourze\DoctrineSnowflakeBundle\Service\SnowflakeIdGenerator;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
-use Tourze\DoctrineUserBundle\Attribute\CreatedByColumn;
-use Tourze\DoctrineUserBundle\Attribute\UpdatedByColumn;
+use Tourze\DoctrineUserBundle\Traits\BlameableAware;
 use UserLevelBundle\Repository\AssignLogRepository;
 
 #[ORM\Entity(repositoryClass: AssignLogRepository::class)]
 #[ORM\Table(name: 'user_level_assign_log', options: ['comment' => '用户等级升降级记录'])]
-class AssignLog implements AdminArrayInterface
+class AssignLog implements AdminArrayInterface, \Stringable
 {
     use TimestampableAware;
+    use BlameableAware;
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(SnowflakeIdGenerator::class)]
@@ -38,17 +38,12 @@ class AssignLog implements AdminArrayInterface
     #[ORM\Column(type: Types::SMALLINT, options: ['comment' => '类型0降级，1升级'])]
     private int $type;
 
-    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true, options: ['comment' => ''])]
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true, options: ['comment' => '分配时间'])]
     private ?\DateTimeInterface $assignTime = null;
 
     #[ORM\Column(type: Types::STRING, length: 100, options: ['comment' => '备注', 'default' => ''])]
     private string $remark;
 
-    #[CreatedByColumn]
-    private ?string $createdBy = null;
-
-    #[UpdatedByColumn]
-    private ?string $updatedBy = null;
 
     public function getId(): ?string
     {
@@ -97,14 +92,24 @@ class AssignLog implements AdminArrayInterface
 
     public function retrieveAdminArray(): array
     {
+        $user = $this->getUser();
+        $userInfo = [];
+        if ($user !== null) {
+            // 检查是否是 BizUser 实例
+            if (method_exists($user, 'getId')) {
+                $userInfo['id'] = $user->getId();
+            }
+            if (method_exists($user, 'getNickName')) {
+                $userInfo['nickName'] = $user->getNickName();
+            }
+            // UserInterface 保证有 getUserIdentifier 方法
+            $userInfo['username'] = $user->getUserIdentifier();
+        }
+        
         return [
             'newLevelInfo' => $this->getNewLevel()->retrieveAdminArray(),
             'oldLevelInfo' => $this->getOldLevel()->retrieveAdminArray(),
-            'userInfo' => [
-                'id' => $this->getUser()?->getId(),
-                'nickName' => $this->getUser()?->getNickName(),
-                'username' => $this->getUser()?->getUsername(),
-            ],
+            'userInfo' => $userInfo,
             'assignTime' => $this->getAssignTime()?->format('Y-m-d H:i:s'),
             'createTime' => $this->getCreateTime()->format('Y-m-d H:i:s'),
         ];
@@ -125,31 +130,12 @@ class AssignLog implements AdminArrayInterface
         return $this->oldLevel;
     }
 
-    public function setCreatedBy(?string $createdBy): self
-    {
-        $this->createdBy = $createdBy;
-
-        return $this;
-    }
-
-    public function getCreatedBy(): ?string
-    {
-        return $this->createdBy;
-    }
-
-    public function setUpdatedBy(?string $updatedBy): self
-    {
-        $this->updatedBy = $updatedBy;
-
-        return $this;
-    }
-
-    public function getUpdatedBy(): ?string
-    {
-        return $this->updatedBy;
-    }
-
     public function setOldLevel(?Level $oldLevel): void
     {
         $this->oldLevel = $oldLevel;
+    }
+    
+    public function __toString(): string
+    {
+        return sprintf('AssignLog#%s', $this->getId() ?? 'new');
     }}

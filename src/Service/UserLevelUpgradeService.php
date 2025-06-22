@@ -26,7 +26,7 @@ class UserLevelUpgradeService
         // 查找用户当前等级
         $currentLevel = $this->userLevelRelationRepository->findOneBy(['user' => $user]);
         // 获取用户下一等级
-        if (!$currentLevel) {// 没等级找一个最低级的
+        if ($currentLevel === null) {// 没等级找一个最低级的
             $level = $this->levelRepository->findOneBy(['valid' => true], ['level' => 'ASC']);
         } else {
             /** @var Level $level */
@@ -38,7 +38,7 @@ class UserLevelUpgradeService
                 ->getQuery()
                 ->getResult();
         }
-        if (!$level) {
+        if ($level === null) {
             return;
         }
         // 获取该等级的升级条件

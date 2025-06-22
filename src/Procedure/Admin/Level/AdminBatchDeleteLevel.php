@@ -31,8 +31,8 @@ class AdminBatchDeleteLevel extends BaseProcedure
 
     public function execute(): array
     {
-        $records = $this->repository->findOneBy(['id' => $this->ids]);
-        if (!$records) {
+        $records = $this->repository->findBy(['id' => $this->ids]);
+        if (count($records) === 0) {
             throw new ApiException('记录不存在');
         }
         try {

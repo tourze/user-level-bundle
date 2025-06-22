@@ -13,7 +13,6 @@ use Tourze\JsonRPC\Core\Exception\ApiException;
 use Tourze\JsonRPC\Core\Procedure\BaseProcedure;
 use Tourze\JsonRPCLogBundle\Attribute\Log;
 use UserLevelBundle\Entity\Level;
-use UserLevelBundle\Repository\LevelRepository;
 
 #[MethodTag('会员中心')]
 #[Log]
@@ -32,7 +31,6 @@ class AdminCreateLevel extends BaseProcedure
     public ?bool $valid = false;
 
     public function __construct(
-        private readonly LevelRepository $repository,
         private readonly EntityManagerInterface $entityManager,
     ) {
     }
