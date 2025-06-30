@@ -6,7 +6,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Stringable;
 use Symfony\Component\Serializer\Attribute\Ignore;
-use Tourze\DoctrineSnowflakeBundle\Service\SnowflakeIdGenerator;
+use Tourze\DoctrineSnowflakeBundle\Traits\SnowflakeKeyAware;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 use Tourze\DoctrineTrackBundle\Attribute\TrackColumn;
 use Tourze\DoctrineUserBundle\Traits\BlameableAware;
@@ -16,13 +16,9 @@ use UserLevelBundle\Repository\UpgradeRuleRepository;
 #[ORM\Table(name: 'biz_user_level_upgrade_rule', options: ['comment' => '用户等级升级规则'])]
 class UpgradeRule implements Stringable
 {
+    use SnowflakeKeyAware;
     use TimestampableAware;
     use BlameableAware;
-    #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(SnowflakeIdGenerator::class)]
-    #[ORM\Column(type: Types::BIGINT, nullable: false, options: ['comment' => 'ID'])]
-    private ?string $id = null;
 
     #[ORM\Column(type: Types::STRING, length: 100, options: ['comment' => '规则名称'])]
     private string $title;
@@ -39,10 +35,6 @@ class UpgradeRule implements Stringable
     private ?bool $valid = false;
 
 
-    public function getId(): ?string
-    {
-        return $this->id;
-    }
 
     public function getTitle(): string
     {

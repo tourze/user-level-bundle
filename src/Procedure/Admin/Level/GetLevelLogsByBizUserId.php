@@ -14,16 +14,16 @@ use Tourze\JsonRPCPaginatorBundle\Procedure\PaginatorTrait;
 use UserLevelBundle\Entity\AssignLog;
 use UserLevelBundle\Repository\AssignLogRepository;
 
-#[MethodTag('会员中心')]
+#[MethodTag(name: '会员中心')]
 #[Log]
-#[IsGranted('IS_AUTHENTICATED_FULLY')]
-#[MethodDoc('拉取用户等级变更记录列表')]
-#[MethodExpose('GetLevelLogsByBizUserId')]
+#[IsGranted(attribute: 'IS_AUTHENTICATED_FULLY')]
+#[MethodDoc(summary: '拉取用户等级变更记录列表')]
+#[MethodExpose(method: 'GetLevelLogsByBizUserId')]
 class GetLevelLogsByBizUserId extends BaseProcedure
 {
     use PaginatorTrait;
 
-    #[MethodParam('用户ID')]
+    #[MethodParam(description: '用户ID')]
     public string $userId;
 
     public function __construct(

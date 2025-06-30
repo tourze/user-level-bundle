@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Stringable;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Attribute\Ignore;
-use Tourze\DoctrineSnowflakeBundle\Service\SnowflakeIdGenerator;
+use Tourze\DoctrineSnowflakeBundle\Traits\SnowflakeKeyAware;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 use Tourze\DoctrineTrackBundle\Attribute\TrackColumn;
 use UserLevelBundle\Repository\UserLevelRelationRepository;
@@ -16,12 +16,8 @@ use UserLevelBundle\Repository\UserLevelRelationRepository;
 #[ORM\Table(name: 'biz_user_level_relation', options: ['comment' => '用户拥有等级'])]
 class UserLevelRelation implements Stringable
 {
+    use SnowflakeKeyAware;
     use TimestampableAware;
-    #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(SnowflakeIdGenerator::class)]
-    #[ORM\Column(type: Types::BIGINT, nullable: false, options: ['comment' => 'ID'])]
-    private ?string $id = null;
 
     #[TrackColumn]
     private ?bool $valid = false;
@@ -35,10 +31,6 @@ class UserLevelRelation implements Stringable
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private Level $level;
 
-    public function getId(): ?string
-    {
-        return $this->id;
-    }
 
     public function isValid(): ?bool
     {

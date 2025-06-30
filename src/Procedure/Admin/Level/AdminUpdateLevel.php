@@ -14,23 +14,23 @@ use Tourze\JsonRPC\Core\Procedure\BaseProcedure;
 use Tourze\JsonRPCLogBundle\Attribute\Log;
 use UserLevelBundle\Repository\LevelRepository;
 
-#[MethodTag('会员中心')]
+#[MethodTag(name: '会员中心')]
 #[Log]
-#[IsGranted('IS_AUTHENTICATED_FULLY')]
-#[MethodDoc('编辑用户等级')]
-#[MethodExpose('AdminUpdateLevel')]
+#[IsGranted(attribute: 'IS_AUTHENTICATED_FULLY')]
+#[MethodDoc(summary: '编辑用户等级')]
+#[MethodExpose(method: 'AdminUpdateLevel')]
 class AdminUpdateLevel extends BaseProcedure
 {
-    #[MethodParam('id')]
+    #[MethodParam(description: 'id')]
     public string $id;
 
-    #[MethodParam('等级名称')]
+    #[MethodParam(description: '等级名称')]
     public string $title;
 
-    #[MethodParam('等级值')]
+    #[MethodParam(description: '等级值')]
     public int $level;
 
-    #[MethodParam('有效')]
+    #[MethodParam(description: '有效')]
     public ?bool $valid = false;
 
     public function __construct(

@@ -13,14 +13,14 @@ use Tourze\JsonRPC\Core\Procedure\BaseProcedure;
 use Tourze\JsonRPCLogBundle\Attribute\Log;
 use UserLevelBundle\Repository\LevelRepository;
 
-#[MethodTag('会员中心')]
+#[MethodTag(name: '会员中心')]
 #[Log]
-#[IsGranted('IS_AUTHENTICATED_FULLY')]
-#[MethodDoc('批量删除用户等级')]
-#[MethodExpose('AdminBatchDeleteLevel')]
+#[IsGranted(attribute: 'IS_AUTHENTICATED_FULLY')]
+#[MethodDoc(summary: '批量删除用户等级')]
+#[MethodExpose(method: 'AdminBatchDeleteLevel')]
 class AdminBatchDeleteLevel extends BaseProcedure
 {
-    #[MethodParam('ids')]
+    #[MethodParam(description: 'ids')]
     public array $ids;
 
     public function __construct(

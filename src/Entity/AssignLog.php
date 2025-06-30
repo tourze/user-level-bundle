@@ -6,7 +6,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Tourze\Arrayable\AdminArrayInterface;
-use Tourze\DoctrineSnowflakeBundle\Service\SnowflakeIdGenerator;
+use Tourze\DoctrineSnowflakeBundle\Traits\SnowflakeKeyAware;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 use Tourze\DoctrineUserBundle\Traits\BlameableAware;
 use UserLevelBundle\Repository\AssignLogRepository;
@@ -15,13 +15,9 @@ use UserLevelBundle\Repository\AssignLogRepository;
 #[ORM\Table(name: 'user_level_assign_log', options: ['comment' => '用户等级升降级记录'])]
 class AssignLog implements AdminArrayInterface, \Stringable
 {
+    use SnowflakeKeyAware;
     use TimestampableAware;
     use BlameableAware;
-    #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(SnowflakeIdGenerator::class)]
-    #[ORM\Column(type: Types::BIGINT, nullable: false, options: ['comment' => 'ID'])]
-    private ?string $id = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
@@ -45,10 +41,6 @@ class AssignLog implements AdminArrayInterface, \Stringable
     private string $remark;
 
 
-    public function getId(): ?string
-    {
-        return $this->id;
-    }
 
     public function getUser(): ?UserInterface
     {

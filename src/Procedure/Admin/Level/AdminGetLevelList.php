@@ -13,16 +13,16 @@ use Tourze\JsonRPCPaginatorBundle\Procedure\PaginatorTrait;
 use UserLevelBundle\Entity\Level;
 use UserLevelBundle\Repository\LevelRepository;
 
-#[MethodTag('会员中心')]
+#[MethodTag(name: '会员中心')]
 #[Log]
-#[IsGranted('IS_AUTHENTICATED_FULLY')]
-#[MethodDoc('拉取用户等级列表')]
-#[MethodExpose('AdminGetLevelList')]
+#[IsGranted(attribute: 'IS_AUTHENTICATED_FULLY')]
+#[MethodDoc(summary: '拉取用户等级列表')]
+#[MethodExpose(method: 'AdminGetLevelList')]
 class AdminGetLevelList extends BaseProcedure
 {
     use PaginatorTrait;
 
-    #[MethodParam('等级名称')]
+    #[MethodParam(description: '等级名称')]
     public string $title = '';
 
     public function __construct(

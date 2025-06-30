@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Stringable;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Attribute\Ignore;
-use Tourze\DoctrineSnowflakeBundle\Service\SnowflakeIdGenerator;
+use Tourze\DoctrineSnowflakeBundle\Traits\SnowflakeKeyAware;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 use UserLevelBundle\Repository\UpgradeProgressRepository;
 
@@ -15,12 +15,8 @@ use UserLevelBundle\Repository\UpgradeProgressRepository;
 #[ORM\Table(name: 'biz_user_level_upgrade_progress', options: ['comment' => '用户等级升级进度'])]
 class UpgradeProgress implements Stringable
 {
+    use SnowflakeKeyAware;
     use TimestampableAware;
-    #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(SnowflakeIdGenerator::class)]
-    #[ORM\Column(type: Types::BIGINT, nullable: false, options: ['comment' => 'ID'])]
-    private ?string $id = null;
 
     #[ORM\ManyToOne(targetEntity: UserInterface::class)]
     #[ORM\JoinColumn(unique: true, nullable: false, onDelete: 'CASCADE')]
@@ -34,10 +30,6 @@ class UpgradeProgress implements Stringable
     #[ORM\Column(options: ['comment' => '当前进度'])]
     private ?int $value = null;
 
-    public function getId(): ?string
-    {
-        return $this->id;
-    }
 
     public function getUser(): UserInterface
     {
