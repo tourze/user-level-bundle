@@ -3,12 +3,7 @@ services:
   _defaults:
     autowire: true      # Automatically injects dependencies in your services.
     autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+    public: true
 
-  UserLevelBundle\Controller\:
-    resource: '../../Controller/'
-  UserLevelBundle\Procedure\:
-    resource: '../../Procedure/'
-  UserLevelBundle\Repository\:
-    resource: '../../Repository/'
-  UserLevelBundle\Service\:
-    resource: '../../Service/'
+  UserLevelBundle\DataFixtures\:
+    resource: '../../DataFixtures/'

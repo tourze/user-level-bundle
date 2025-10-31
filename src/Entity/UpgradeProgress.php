@@ -2,18 +2,17 @@
 
 namespace UserLevelBundle\Entity;
 
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Stringable;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Attribute\Ignore;
+use Symfony\Component\Validator\Constraints as Assert;
 use Tourze\DoctrineSnowflakeBundle\Traits\SnowflakeKeyAware;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 use UserLevelBundle\Repository\UpgradeProgressRepository;
 
 #[ORM\Entity(repositoryClass: UpgradeProgressRepository::class)]
 #[ORM\Table(name: 'biz_user_level_upgrade_progress', options: ['comment' => '用户等级升级进度'])]
-class UpgradeProgress implements Stringable
+class UpgradeProgress implements \Stringable
 {
     use SnowflakeKeyAware;
     use TimestampableAware;
@@ -28,8 +27,9 @@ class UpgradeProgress implements Stringable
     private UpgradeRule $upgradeRule;
 
     #[ORM\Column(options: ['comment' => '当前进度'])]
+    #[Assert\GreaterThanOrEqual(value: 0, message: 'value must be greater than or equal to 0')]
+    #[Assert\Type(type: 'int', message: 'value must be an integer')]
     private ?int $value = null;
-
 
     public function getUser(): UserInterface
     {
@@ -60,6 +60,7 @@ class UpgradeProgress implements Stringable
     {
         $this->value = $value;
     }
+
     public function __toString(): string
     {
         return (string) $this->id;

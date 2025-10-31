@@ -26,19 +26,22 @@ class UserLevelUpgradeService
         // 查找用户当前等级
         $currentLevel = $this->userLevelRelationRepository->findOneBy(['user' => $user]);
         // 获取用户下一等级
-        if ($currentLevel === null) {// 没等级找一个最低级的
+        if (null === $currentLevel) {// 没等级找一个最低级的
+            /** @var Level|null $level */
             $level = $this->levelRepository->findOneBy(['valid' => true], ['level' => 'ASC']);
         } else {
-            /** @var Level $level */
+            /** @var Level|null $level */
             $level = $this->levelRepository->createQueryBuilder('a')
                 ->where('a.valid = :valid AND a.level > :level')
                 ->setParameter('valid', 'true')
                 ->setParameter('level', $currentLevel->getLevel()->getLevel())
                 ->addOrderBy('a.level', 'ASC')
+                ->setMaxResults(1)
                 ->getQuery()
-                ->getResult();
+                ->getOneOrNullResult()
+            ;
         }
-        if ($level === null) {
+        if (null === $level) {
             return;
         }
         // 获取该等级的升级条件
@@ -57,10 +60,8 @@ class UserLevelUpgradeService
 
     /**
      * 降级
-     *
-     * @return void
      */
-    public function degrade(UserInterface $user)
+    public function degrade(UserInterface $user): void
     {
     }
 }

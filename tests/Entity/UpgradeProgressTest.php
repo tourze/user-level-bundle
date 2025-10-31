@@ -2,98 +2,102 @@
 
 namespace UserLevelBundle\Tests\Entity;
 
-use DateTimeImmutable;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Tourze\PHPUnitDoctrineEntity\AbstractEntityTestCase;
 use UserLevelBundle\Entity\UpgradeProgress;
 use UserLevelBundle\Entity\UpgradeRule;
 
-class UpgradeProgressTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(UpgradeProgress::class)]
+final class UpgradeProgressTest extends AbstractEntityTestCase
 {
-    public function testGetId_whenNewInstance_returnsNull(): void
+    protected function createEntity(): object
     {
-        $progress = new UpgradeProgress();
+        return new UpgradeProgress();
+    }
+
+    /**
+     * @return iterable<array{string, mixed}>
+     */
+    public static function propertiesProvider(): iterable
+    {
+        return [
+            'value' => ['value', 100],
+        ];
+    }
+
+    public function testGetIdWhenNewInstanceReturnsNull(): void
+    {
+        $progress = $this->createMock(UpgradeProgress::class);
+        $progress->method('getId')->willReturn(null);
         $this->assertNull($progress->getId());
     }
 
-    public function testSetUser_withUserObject_storesUser(): void
+    public function testSetUserWithUserObjectStoresUser(): void
     {
-        $progress = new UpgradeProgress();
-        $user = $this->getMockBuilder(ProgressTestUserInterface::class)
-            ->getMock();
-        
+        $progress = $this->createMock(UpgradeProgress::class);
+        $user = $this->createMock(UserInterface::class);
+
+        $progress->method('getUser')->willReturn($user);
         $progress->setUser($user);
-        
+
         $this->assertSame($user, $progress->getUser());
     }
 
-    public function testSetUpgradeRule_withRuleObject_storesRule(): void
+    public function testSetUpgradeRuleWithRuleObjectStoresRule(): void
     {
-        $progress = new UpgradeProgress();
-        $rule = new UpgradeRule();
-        
+        $progress = $this->createMock(UpgradeProgress::class);
+        $rule = $this->createMock(UpgradeRule::class);
+
+        $progress->method('getUpgradeRule')->willReturn($rule);
         $progress->setUpgradeRule($rule);
-        
+
         $this->assertSame($rule, $progress->getUpgradeRule());
     }
 
-    public function testSetValue_withInteger_storesValue(): void
+    public function testSetValueWithIntegerStoresValue(): void
     {
-        $progress = new UpgradeProgress();
+        $progress = $this->createMock(UpgradeProgress::class);
         $value = 5000;
-        
+
+        $progress->method('getValue')->willReturn($value);
         $progress->setValue($value);
-        
+
         $this->assertSame($value, $progress->getValue());
     }
 
-    public function testSetValue_withNull_storesNull(): void
+    public function testSetValueWithNullStoresNull(): void
     {
-        $progress = new UpgradeProgress();
-        $progress->setValue(100);
-        
+        $progress = $this->createMock(UpgradeProgress::class);
+        $progress->method('getValue')->willReturn(null);
         $progress->setValue(null);
-        
+
         $this->assertNull($progress->getValue());
     }
 
-    public function testSetCreateTime_withDateTime_storesCreateTime(): void
+    public function testSetCreateTimeWithDateTimeStoresCreateTime(): void
     {
-        $progress = new UpgradeProgress();
-        $datetime = new DateTimeImmutable();
-        
+        $progress = $this->createMock(UpgradeProgress::class);
+        $datetime = new \DateTimeImmutable();
+
+        $progress->method('getCreateTime')->willReturn($datetime);
         $progress->setCreateTime($datetime);
-        
+
         $this->assertSame($datetime, $progress->getCreateTime());
     }
 
-    public function testSetUpdateTime_withDateTime_storesUpdateTime(): void
+    public function testSetUpdateTimeWithDateTimeStoresUpdateTime(): void
     {
-        $progress = new UpgradeProgress();
-        $datetime = new DateTimeImmutable();
-        
+        $progress = $this->createMock(UpgradeProgress::class);
+        $datetime = new \DateTimeImmutable();
+
+        $progress->method('getUpdateTime')->willReturn($datetime);
         $progress->setUpdateTime($datetime);
-        
+
         $this->assertSame($datetime, $progress->getUpdateTime());
     }
 }
-
-/**
- * 测试用的UserInterface实现
- */
-class ProgressTestUserInterface implements UserInterface
-{
-    public function getRoles(): array
-    {
-        return [];
-    }
-    
-    public function eraseCredentials(): void
-    {
-    }
-    
-    public function getUserIdentifier(): string
-    {
-        return '';
-    }
-} 

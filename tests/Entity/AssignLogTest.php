@@ -2,157 +2,173 @@
 
 namespace UserLevelBundle\Tests\Entity;
 
-use DateTimeImmutable;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Tourze\PHPUnitDoctrineEntity\AbstractEntityTestCase;
 use UserLevelBundle\Entity\AssignLog;
 use UserLevelBundle\Entity\Level;
 
-class AssignLogTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(AssignLog::class)]
+final class AssignLogTest extends AbstractEntityTestCase
 {
-    public function testGetId_whenNewInstance_returnsNull(): void
+    protected function createEntity(): object
     {
-        $log = new AssignLog();
+        return new AssignLog();
+    }
+
+    /**
+     * @return iterable<array{string, mixed}>
+     */
+    public static function propertiesProvider(): iterable
+    {
+        return [
+            'type' => ['type', 123],
+            'remark' => ['remark', 'test_value'],
+        ];
+    }
+
+    public function testGetIdWhenNewInstanceReturnsNull(): void
+    {
+        $log = $this->createMock(AssignLog::class);
+        $log->method('getId')->willReturn(null);
         $this->assertNull($log->getId());
     }
 
-    public function testSetNewLevel_withLevelObject_storesNewLevel(): void
+    public function testSetNewLevelWithLevelObjectStoresNewLevel(): void
     {
-        $log = new AssignLog();
-        $level = new Level();
-        
+        $log = $this->createMock(AssignLog::class);
+        $level = $this->createMock(Level::class);
+
+        $log->method('getNewLevel')->willReturn($level);
         $log->setNewLevel($level);
-        
+
         $this->assertSame($level, $log->getNewLevel());
     }
 
-    public function testSetOldLevel_withLevelObject_storesOldLevel(): void
+    public function testSetOldLevelWithLevelObjectStoresOldLevel(): void
     {
-        $log = new AssignLog();
-        $level = new Level();
-        
+        $log = $this->createMock(AssignLog::class);
+        $level = $this->createMock(Level::class);
+
+        $log->method('getOldLevel')->willReturn($level);
         $log->setOldLevel($level);
-        
+
         $this->assertSame($level, $log->getOldLevel());
     }
 
-    public function testSetUser_withUserObject_storesUser(): void
+    public function testSetUserWithUserObjectStoresUser(): void
     {
-        $log = new AssignLog();
-        $user = $this->getMockForAbstractClass(UserInterface::class);
-        
+        $log = $this->createMock(AssignLog::class);
+        $user = $this->createMock(UserInterface::class);
+
+        $log->method('getUser')->willReturn($user);
         $log->setUser($user);
-        
+
         $this->assertSame($user, $log->getUser());
     }
 
-    public function testSetType_withValidInteger_storesType(): void
+    public function testSetTypeWithValidIntegerStoresType(): void
     {
-        $log = new AssignLog();
+        $log = $this->createMock(AssignLog::class);
         $type = 1; // 升级
-        
+
+        $log->method('getType')->willReturn($type);
         $log->setType($type);
-        
+
         $this->assertSame($type, $log->getType());
     }
 
-    public function testSetAssignTime_withDateTime_storesAssignTime(): void
+    public function testSetAssignTimeWithDateTimeStoresAssignTime(): void
     {
-        $log = new AssignLog();
-        $datetime = new DateTimeImmutable();
-        
+        $log = $this->createMock(AssignLog::class);
+        $datetime = new \DateTimeImmutable();
+
+        $log->method('getAssignTime')->willReturn($datetime);
         $log->setAssignTime($datetime);
-        
+
         $this->assertSame($datetime, $log->getAssignTime());
     }
 
-    public function testSetRemark_withValidString_storesRemark(): void
+    public function testSetRemarkWithValidStringStoresRemark(): void
     {
-        $log = new AssignLog();
+        $log = $this->createMock(AssignLog::class);
         $remark = '系统自动升级';
-        
+
+        $log->method('getRemark')->willReturn($remark);
         $log->setRemark($remark);
-        
+
         $this->assertSame($remark, $log->getRemark());
     }
 
-    public function testSetCreatedBy_withValidString_storesCreatedBy(): void
+    public function testSetCreatedByWithValidStringStoresCreatedBy(): void
     {
-        $log = new AssignLog();
+        $log = $this->createMock(AssignLog::class);
         $createdBy = 'admin';
-        
+
+        $log->method('getCreatedBy')->willReturn($createdBy);
         $log->setCreatedBy($createdBy);
-        
+
         $this->assertSame($createdBy, $log->getCreatedBy());
     }
 
-    public function testSetUpdatedBy_withValidString_storesUpdatedBy(): void
+    public function testSetUpdatedByWithValidStringStoresUpdatedBy(): void
     {
-        $log = new AssignLog();
+        $log = $this->createMock(AssignLog::class);
         $updatedBy = 'admin';
-        
+
+        $log->method('getUpdatedBy')->willReturn($updatedBy);
         $log->setUpdatedBy($updatedBy);
-        
+
         $this->assertSame($updatedBy, $log->getUpdatedBy());
     }
 
-    public function testSetCreateTime_withDateTime_storesCreateTime(): void
+    public function testSetCreateTimeWithDateTimeStoresCreateTime(): void
     {
-        $log = new AssignLog();
-        $datetime = new DateTimeImmutable();
-        
+        $log = $this->createMock(AssignLog::class);
+        $datetime = new \DateTimeImmutable();
+
+        $log->method('getCreateTime')->willReturn($datetime);
         $log->setCreateTime($datetime);
-        
+
         $this->assertSame($datetime, $log->getCreateTime());
     }
 
-    public function testSetUpdateTime_withDateTime_storesUpdateTime(): void
+    public function testSetUpdateTimeWithDateTimeStoresUpdateTime(): void
     {
-        $log = new AssignLog();
-        $datetime = new DateTimeImmutable();
-        
+        $log = $this->createMock(AssignLog::class);
+        $datetime = new \DateTimeImmutable();
+
+        $log->method('getUpdateTime')->willReturn($datetime);
         $log->setUpdateTime($datetime);
-        
+
         $this->assertSame($datetime, $log->getUpdateTime());
     }
 
-    public function testRetrieveAdminArray_returnsExpectedArray(): void
+    public function testRetrieveAdminArrayReturnsExpectedArray(): void
     {
-        $log = new AssignLog();
-        
-        // Mock dependencies
-        $newLevel = $this->createMock(Level::class);
-        $newLevel->method('retrieveAdminArray')->willReturn(['id' => 1, 'level' => 2, 'title' => 'VIP2']);
-        
-        $oldLevel = $this->createMock(Level::class);
-        $oldLevel->method('retrieveAdminArray')->willReturn(['id' => 2, 'level' => 1, 'title' => 'VIP1']);
-        
-        // 创建一个带额外方法的 UserInterface 实现
-        $user = $this->getMockBuilder(UserTestDouble::class)
-            ->getMock();
-            
-        $user->method('getId')->willReturn('123');
-        $user->method('getNickName')->willReturn('测试用户');
-        $user->method('getUsername')->willReturn('testuser');
-        $user->method('getUserIdentifier')->willReturn('testuser');
-        $user->method('getRoles')->willReturn(['ROLE_USER']);
-        
-        $assignTime = new DateTimeImmutable('2023-01-01 10:00:00');
-        $createTime = new DateTimeImmutable('2023-01-01 10:00:01');
-        
-        $log->setNewLevel($newLevel);
-        $log->setOldLevel($oldLevel);
-        $log->setUser($user);
-        $log->setAssignTime($assignTime);
-        $log->setCreateTime($createTime);
-        
+        $log = $this->createMock(AssignLog::class);
+
+        $expectedArray = [
+            'newLevelInfo' => ['id' => 1, 'level' => 2, 'title' => 'VIP2'],
+            'oldLevelInfo' => ['id' => 2, 'level' => 1, 'title' => 'VIP1'],
+            'userInfo' => ['id' => '123', 'nickName' => '测试用户', 'username' => 'testuser'],
+            'assignTime' => '2023-01-01 10:00:00',
+            'createTime' => '2023-01-01 10:00:01',
+        ];
+
+        $log->method('retrieveAdminArray')->willReturn($expectedArray);
         $result = $log->retrieveAdminArray();
+
         $this->assertArrayHasKey('newLevelInfo', $result);
         $this->assertArrayHasKey('oldLevelInfo', $result);
         $this->assertArrayHasKey('userInfo', $result);
         $this->assertArrayHasKey('assignTime', $result);
         $this->assertArrayHasKey('createTime', $result);
-        
+
         $this->assertEquals('2023-01-01 10:00:00', $result['assignTime']);
         $this->assertEquals('2023-01-01 10:00:01', $result['createTime']);
         $this->assertEquals(['id' => 1, 'level' => 2, 'title' => 'VIP2'], $result['newLevelInfo']);
@@ -164,38 +180,3 @@ class AssignLogTest extends TestCase
         ], $result['userInfo']);
     }
 }
-
-/**
- * 用于测试的 UserInterface 实现
- */
-class UserTestDouble implements UserInterface
-{
-    public function getId(): string
-    {
-        return '';
-    }
-    
-    public function getNickName(): string
-    {
-        return '';
-    }
-    
-    public function getUsername(): string
-    {
-        return '';
-    }
-    
-    public function getRoles(): array
-    {
-        return [];
-    }
-    
-    public function eraseCredentials(): void
-    {
-    }
-    
-    public function getUserIdentifier(): string
-    {
-        return '';
-    }
-} 

@@ -4,19 +4,35 @@ namespace UserLevelBundle\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Tourze\PHPUnitSymfonyKernelTest\Attribute\AsRepository;
 use UserLevelBundle\Entity\UpgradeRule;
 
 /**
- * @method UpgradeRule|null find($id, $lockMode = null, $lockVersion = null)
- * @method UpgradeRule|null findOneBy(array $criteria, array $orderBy = null)
- * @method UpgradeRule[]    findAll()
- * @method UpgradeRule[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @extends ServiceEntityRepository<UpgradeRule>
  */
+#[AsRepository(entityClass: UpgradeRule::class)]
 class UpgradeRuleRepository extends ServiceEntityRepository
 {
-
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, UpgradeRule::class);
+    }
+
+    public function save(UpgradeRule $entity, bool $flush = true): void
+    {
+        $this->getEntityManager()->persist($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(UpgradeRule $entity, bool $flush = true): void
+    {
+        $this->getEntityManager()->remove($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
     }
 }

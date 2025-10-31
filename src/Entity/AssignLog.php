@@ -5,12 +5,16 @@ namespace UserLevelBundle\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 use Tourze\Arrayable\AdminArrayInterface;
 use Tourze\DoctrineSnowflakeBundle\Traits\SnowflakeKeyAware;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 use Tourze\DoctrineUserBundle\Traits\BlameableAware;
 use UserLevelBundle\Repository\AssignLogRepository;
 
+/**
+ * @implements AdminArrayInterface<string, mixed>
+ */
 #[ORM\Entity(repositoryClass: AssignLogRepository::class)]
 #[ORM\Table(name: 'user_level_assign_log', options: ['comment' => '用户等级升降级记录'])]
 class AssignLog implements AdminArrayInterface, \Stringable
@@ -32,15 +36,17 @@ class AssignLog implements AdminArrayInterface, \Stringable
     private ?UserInterface $user = null;
 
     #[ORM\Column(type: Types::SMALLINT, options: ['comment' => '类型0降级，1升级'])]
+    #[Assert\Choice(choices: [0, 1], message: 'type must be 0 (downgrade) or 1 (upgrade)')]
     private int $type;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true, options: ['comment' => '分配时间'])]
+    #[Assert\Type(type: '\DateTimeInterface', message: 'assignTime must be a DateTimeInterface')]
     private ?\DateTimeInterface $assignTime = null;
 
     #[ORM\Column(type: Types::STRING, length: 100, options: ['comment' => '备注', 'default' => ''])]
+    #[Assert\Length(max: 100, maxMessage: 'remark cannot exceed 100 characters')]
+    #[Assert\NotBlank(message: 'remark cannot be blank')]
     private string $remark;
-
-
 
     public function getUser(): ?UserInterface
     {
@@ -82,11 +88,14 @@ class AssignLog implements AdminArrayInterface, \Stringable
         $this->remark = $remark;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function retrieveAdminArray(): array
     {
         $user = $this->getUser();
         $userInfo = [];
-        if ($user !== null) {
+        if (null !== $user) {
             // 检查是否是 BizUser 实例
             if (method_exists($user, 'getId')) {
                 $userInfo['id'] = $user->getId();
@@ -97,13 +106,13 @@ class AssignLog implements AdminArrayInterface, \Stringable
             // UserInterface 保证有 getUserIdentifier 方法
             $userInfo['username'] = $user->getUserIdentifier();
         }
-        
+
         return [
-            'newLevelInfo' => $this->getNewLevel()->retrieveAdminArray(),
-            'oldLevelInfo' => $this->getOldLevel()->retrieveAdminArray(),
+            'newLevelInfo' => $this->getNewLevel()?->retrieveAdminArray() ?? [],
+            'oldLevelInfo' => $this->getOldLevel()?->retrieveAdminArray() ?? [],
             'userInfo' => $userInfo,
-            'assignTime' => $this->getAssignTime()?->format('Y-m-d H:i:s'),
-            'createTime' => $this->getCreateTime()->format('Y-m-d H:i:s'),
+            'assignTime' => $this->getAssignTime()?->format('Y-m-d H:i:s') ?? null,
+            'createTime' => $this->getCreateTime()?->format('Y-m-d H:i:s') ?? null,
         ];
     }
 
@@ -126,8 +135,9 @@ class AssignLog implements AdminArrayInterface, \Stringable
     {
         $this->oldLevel = $oldLevel;
     }
-    
+
     public function __toString(): string
     {
         return sprintf('AssignLog#%s', $this->getId() ?? 'new');
-    }}
+    }
+}

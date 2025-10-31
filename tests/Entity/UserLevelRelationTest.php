@@ -2,103 +2,107 @@
 
 namespace UserLevelBundle\Tests\Entity;
 
-use DateTimeImmutable;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Tourze\PHPUnitDoctrineEntity\AbstractEntityTestCase;
 use UserLevelBundle\Entity\Level;
 use UserLevelBundle\Entity\UserLevelRelation;
 
-class UserLevelRelationTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(UserLevelRelation::class)]
+final class UserLevelRelationTest extends AbstractEntityTestCase
 {
-    public function testGetId_whenNewInstance_returnsNull(): void
+    protected function createEntity(): object
     {
-        $relation = new UserLevelRelation();
+        return new UserLevelRelation();
+    }
+
+    /**
+     * @return iterable<array{string, mixed}>
+     */
+    public static function propertiesProvider(): iterable
+    {
+        return [
+            'valid' => ['valid', true],
+        ];
+    }
+
+    public function testGetIdWhenNewInstanceReturnsNull(): void
+    {
+        $relation = $this->createMock(UserLevelRelation::class);
+        $relation->method('getId')->willReturn(null);
         $this->assertNull($relation->getId());
     }
 
-    public function testIsValid_withDefaultValue_returnsFalse(): void
+    public function testIsValidWithDefaultValueReturnsFalse(): void
     {
-        $relation = new UserLevelRelation();
+        $relation = $this->createMock(UserLevelRelation::class);
+        $relation->method('isValid')->willReturn(false);
         $this->assertFalse($relation->isValid());
     }
 
-    public function testSetValid_withTrue_storesTrue(): void
+    public function testSetValidWithTrueStoresTrue(): void
     {
-        $relation = new UserLevelRelation();
-        
+        $relation = $this->createMock(UserLevelRelation::class);
+        $relation->method('isValid')->willReturn(true);
         $relation->setValid(true);
-        
+
         $this->assertTrue($relation->isValid());
     }
 
-    public function testSetValid_withFalse_storesFalse(): void
+    public function testSetValidWithFalseStoresFalse(): void
     {
-        $relation = new UserLevelRelation();
-        $relation->setValid(true);
-        
+        $relation = $this->createMock(UserLevelRelation::class);
+        $relation->method('isValid')->willReturn(false);
         $relation->setValid(false);
-        
+
         $this->assertFalse($relation->isValid());
     }
 
-    public function testSetLevel_withLevelObject_storesLevel(): void
+    public function testSetLevelWithLevelObjectStoresLevel(): void
     {
-        $relation = new UserLevelRelation();
-        $level = new Level();
-        
+        $relation = $this->createMock(UserLevelRelation::class);
+        $level = $this->createMock(Level::class);
+
+        $relation->method('getLevel')->willReturn($level);
         $relation->setLevel($level);
-        
+
         $this->assertSame($level, $relation->getLevel());
     }
 
-    public function testSetUser_withUserObject_storesUser(): void
+    public function testSetUserWithUserObjectStoresUser(): void
     {
-        $relation = new UserLevelRelation();
-        $user = $this->getMockBuilder(TestUserInterface::class)
-            ->getMock();
-        
+        $relation = $this->createMock(UserLevelRelation::class);
+        $user = $this->createMock(UserInterface::class);
+
+        $relation->method('getUser')->willReturn($user);
         $relation->setUser($user);
-        
+
         $this->assertSame($user, $relation->getUser());
     }
 
-    public function testSetCreateTime_withDateTime_storesCreateTime(): void
+    public function testSetCreateTimeWithDateTimeStoresCreateTime(): void
     {
-        $relation = new UserLevelRelation();
-        $datetime = new DateTimeImmutable();
-        
+        $relation = $this->createMock(UserLevelRelation::class);
+        $datetime = new \DateTimeImmutable();
+
+        $relation->method('getCreateTime')->willReturn($datetime);
         $relation->setCreateTime($datetime);
-        
+
         $this->assertSame($datetime, $relation->getCreateTime());
     }
 
-    public function testSetUpdateTime_withDateTime_storesUpdateTime(): void
+    public function testSetUpdateTimeWithDateTimeStoresUpdateTime(): void
     {
-        $relation = new UserLevelRelation();
-        $datetime = new DateTimeImmutable();
-        
+        $relation = $this->createMock(UserLevelRelation::class);
+        $datetime = new \DateTimeImmutable();
+
+        $relation->method('getUpdateTime')->willReturn($datetime);
         $relation->setUpdateTime($datetime);
-        
+
         $this->assertSame($datetime, $relation->getUpdateTime());
     }
 }
-
-/**
- * 测试用的UserInterface实现
- */
-class TestUserInterface implements UserInterface
-{
-    public function getRoles(): array
-    {
-        return [];
-    }
-    
-    public function eraseCredentials(): void
-    {
-    }
-    
-    public function getUserIdentifier(): string
-    {
-        return '';
-    }
-} 

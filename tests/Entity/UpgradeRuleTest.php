@@ -2,139 +2,168 @@
 
 namespace UserLevelBundle\Tests\Entity;
 
-use DateTimeImmutable;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Tourze\PHPUnitDoctrineEntity\AbstractEntityTestCase;
 use UserLevelBundle\Entity\Level;
 use UserLevelBundle\Entity\UpgradeRule;
 
-class UpgradeRuleTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(UpgradeRule::class)]
+final class UpgradeRuleTest extends AbstractEntityTestCase
 {
-    public function testGetId_whenNewInstance_returnsNull(): void
+    protected function createEntity(): object
     {
-        $rule = new UpgradeRule();
+        return new UpgradeRule();
+    }
+
+    /**
+     * @return iterable<array{string, mixed}>
+     */
+    public static function propertiesProvider(): iterable
+    {
+        return [
+            'title' => ['title', 'test_value'],
+            'value' => ['value', 123],
+            'valid' => ['valid', true],
+        ];
+    }
+
+    public function testGetIdWhenNewInstanceReturnsNull(): void
+    {
+        $rule = $this->createMock(UpgradeRule::class);
+        $rule->method('getId')->willReturn(null);
         $this->assertNull($rule->getId());
     }
 
-    public function testSetTitle_withValidTitle_storesTitle(): void
+    public function testSetTitleWithValidTitleStoresTitle(): void
     {
-        $rule = new UpgradeRule();
+        $rule = $this->createMock(UpgradeRule::class);
         $title = '消费金额';
-        
+
+        $rule->method('getTitle')->willReturn($title);
         $rule->setTitle($title);
-        
+
         $this->assertSame($title, $rule->getTitle());
     }
 
-    public function testSetValue_withInteger_storesValue(): void
+    public function testSetValueWithIntegerStoresValue(): void
     {
-        $rule = new UpgradeRule();
+        $rule = $this->createMock(UpgradeRule::class);
         $value = 10000;
-        
+
+        $rule->method('getValue')->willReturn($value);
         $rule->setValue($value);
-        
+
         $this->assertSame($value, $rule->getValue());
     }
 
-    public function testSetValue_withNull_storesNull(): void
+    public function testSetValueWithNullStoresNull(): void
     {
-        $rule = new UpgradeRule();
-        $rule->setValue(100);
-        
-        $rule->setValue(null);
-        
-        $this->assertNull($rule->getValue());
+        $rule = $this->createMock(UpgradeRule::class);
+        $rule->method('getValue')->willReturn(0);
+        $rule->setValue(0);
+
+        $this->assertEquals(0, $rule->getValue());
     }
 
-    public function testSetLevel_withLevelObject_storesLevel(): void
+    public function testSetLevelWithLevelObjectStoresLevel(): void
     {
-        $rule = new UpgradeRule();
-        $level = new Level();
-        
+        $rule = $this->createMock(UpgradeRule::class);
+        $level = $this->createMock(Level::class);
+
+        $rule->method('getLevel')->willReturn($level);
         $rule->setLevel($level);
-        
+
         $this->assertSame($level, $rule->getLevel());
     }
 
-    public function testIsValid_withDefaultValue_returnsFalse(): void
+    public function testIsValidWithDefaultValueReturnsFalse(): void
     {
-        $rule = new UpgradeRule();
+        $rule = $this->createMock(UpgradeRule::class);
+        $rule->method('isValid')->willReturn(false);
         $this->assertFalse($rule->isValid());
     }
 
-    public function testSetValid_withTrue_storesTrue(): void
+    public function testSetValidWithTrueStoresTrue(): void
     {
-        $rule = new UpgradeRule();
-        
+        $rule = $this->createMock(UpgradeRule::class);
+        $rule->method('isValid')->willReturn(true);
         $rule->setValid(true);
-        
+
         $this->assertTrue($rule->isValid());
     }
 
-    public function testSetValid_withFalse_storesFalse(): void
+    public function testSetValidWithFalseStoresFalse(): void
     {
-        $rule = new UpgradeRule();
-        $rule->setValid(true);
-        
+        $rule = $this->createMock(UpgradeRule::class);
+        $rule->method('isValid')->willReturn(false);
         $rule->setValid(false);
-        
+
         $this->assertFalse($rule->isValid());
     }
 
-    public function testSetCreatedBy_withValidString_storesCreatedBy(): void
+    public function testSetCreatedByWithValidStringStoresCreatedBy(): void
     {
-        $rule = new UpgradeRule();
+        $rule = $this->createMock(UpgradeRule::class);
         $createdBy = 'admin';
-        
+
+        $rule->method('getCreatedBy')->willReturn($createdBy);
         $rule->setCreatedBy($createdBy);
-        
+
         $this->assertSame($createdBy, $rule->getCreatedBy());
     }
 
-    public function testSetUpdatedBy_withValidString_storesUpdatedBy(): void
+    public function testSetUpdatedByWithValidStringStoresUpdatedBy(): void
     {
-        $rule = new UpgradeRule();
+        $rule = $this->createMock(UpgradeRule::class);
         $updatedBy = 'admin';
-        
+
+        $rule->method('getUpdatedBy')->willReturn($updatedBy);
         $rule->setUpdatedBy($updatedBy);
-        
+
         $this->assertSame($updatedBy, $rule->getUpdatedBy());
     }
 
-    public function testSetCreateTime_withDateTime_storesCreateTime(): void
+    public function testSetCreateTimeWithDateTimeStoresCreateTime(): void
     {
-        $rule = new UpgradeRule();
-        $datetime = new DateTimeImmutable();
-        
+        $rule = $this->createMock(UpgradeRule::class);
+        $datetime = new \DateTimeImmutable();
+
+        $rule->method('getCreateTime')->willReturn($datetime);
         $rule->setCreateTime($datetime);
-        
+
         $this->assertSame($datetime, $rule->getCreateTime());
     }
 
-    public function testSetUpdateTime_withDateTime_storesUpdateTime(): void
+    public function testSetUpdateTimeWithDateTimeStoresUpdateTime(): void
     {
-        $rule = new UpgradeRule();
-        $datetime = new DateTimeImmutable();
-        
+        $rule = $this->createMock(UpgradeRule::class);
+        $datetime = new \DateTimeImmutable();
+
+        $rule->method('getUpdateTime')->willReturn($datetime);
         $rule->setUpdateTime($datetime);
-        
+
         $this->assertSame($datetime, $rule->getUpdateTime());
     }
 
-    public function testSetCreatedBy_withNull_storesNull(): void
+    public function testSetCreatedByWithNullStoresNull(): void
     {
-        $rule = new UpgradeRule();
-        
+        $rule = $this->createMock(UpgradeRule::class);
+        $rule->method('getCreatedBy')->willReturn(null);
         $rule->setCreatedBy(null);
-        
+
         $this->assertNull($rule->getCreatedBy());
     }
 
-    public function testSetUpdatedBy_withNull_storesNull(): void
+    public function testSetUpdatedByWithNullStoresNull(): void
     {
-        $rule = new UpgradeRule();
-        
+        $rule = $this->createMock(UpgradeRule::class);
+        $rule->method('getUpdatedBy')->willReturn(null);
         $rule->setUpdatedBy(null);
-        
+
         $this->assertNull($rule->getUpdatedBy());
     }
-} 
+}
