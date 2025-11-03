@@ -2,10 +2,10 @@
 
 namespace UserLevelBundle\Tests\Repository;
 
-use BizUserBundle\Entity\BizUser;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Tourze\PHPUnitSymfonyKernelTest\AbstractRepositoryTestCase;
 use UserLevelBundle\Entity\AssignLog;
 use UserLevelBundle\Entity\Level;
@@ -23,6 +23,19 @@ final class AssignLogRepositoryTest extends AbstractRepositoryTestCase
     protected function onSetUp(): void
     {
         $this->repository = self::getService(AssignLogRepository::class);
+    }
+
+    // 重要：避免跨进程序列化时携带 EntityManager/UnitOfWork
+    // Repository 持有 EntityManager 引用，若不置空，PHPUnit 在子进程结束后
+    // 会序列化整个对象图（包含实体对象和临时生成的用户实体类），
+    // 父进程无法自动加载该临时类，导致 __PHP_Incomplete_Class 赋值到
+    // AssignLog::$user（UserInterface 类型）时报错。
+    protected function onTearDown(): void
+    {
+        // 显式释放仓库引用，避免被序列化
+        unset($this->repository);
+        // 清理 EntityManager 以进一步降低对象图被意外持有的风险
+        self::getEntityManager()->clear();
     }
 
     public function testRepositoryServiceInstantiation(): void
@@ -200,8 +213,8 @@ final class AssignLogRepositoryTest extends AbstractRepositoryTestCase
 
     public function testCountByAssociationUserShouldReturnCorrectNumber(): void
     {
-        $user1 = $this->createBizUser();
-        $user2 = $this->createBizUser();
+        $user1 = $this->createNormalUser('user1-' . uniqid(), 'password123');
+        $user2 = $this->createNormalUser('user2-' . uniqid(), 'password123');
 
         $this->createValidAssignLog(['user' => $user1]);
         $this->createValidAssignLog(['user' => $user2]);
@@ -268,13 +281,13 @@ final class AssignLogRepositoryTest extends AbstractRepositoryTestCase
     /**
      * @param array<string, mixed> $overrides
      */
-    private function extractUserOverride(array $overrides): BizUser
+    private function extractUserOverride(array $overrides): UserInterface
     {
-        if (isset($overrides['user']) && $overrides['user'] instanceof BizUser) {
+        if (isset($overrides['user']) && $overrides['user'] instanceof UserInterface) {
             return $overrides['user'];
         }
 
-        return $this->createBizUser();
+        return $this->createNormalUser('testuser' . time() . mt_rand(1000, 9999), 'password123');
     }
 
     /**
@@ -333,21 +346,6 @@ final class AssignLogRepositoryTest extends AbstractRepositoryTestCase
         return $levelEntity;
     }
 
-    private function createBizUser(): BizUser
-    {
-        $user = new BizUser();
-
-        // 使用时间戳和随机数确保唯一性
-        $randomId = time() . mt_rand(1000, 9999);
-        $user->setUsername('testuser' . $randomId);
-        $user->setNickName('Test User ' . $randomId);
-        $user->setPlainPassword('password123');
-        // BizUser 不需要直接设置 roles，它通过 assignRoles 集合管理
-
-        $this->persistAndFlush($user);
-
-        return $user;
-    }
 
     protected function createNewEntity(): object
     {
@@ -356,7 +354,7 @@ final class AssignLogRepositoryTest extends AbstractRepositoryTestCase
         // 设置必需的关联实体
         $entity->setOldLevel($this->createLevel());
         $entity->setNewLevel($this->createLevel());
-        $entity->setUser($this->createBizUser());
+        $entity->setUser($this->createNormalUser('test-entity-' . uniqid(), 'password123'));
 
         // 设置基本字段
         $entity->setType(1);

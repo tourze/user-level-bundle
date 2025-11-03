@@ -34,108 +34,83 @@ final class LevelTest extends AbstractEntityTestCase
 
     public function testGetIdWhenNewInstanceReturnsNull(): void
     {
-        $level = $this->createMock(Level::class);
-        $level->method('getId')->willReturn(null);
+        $level = new Level();
         $this->assertNull($level->getId());
     }
 
     public function testSetTitleWithValidTitleStoresTitle(): void
     {
-        $level = $this->createMock(Level::class);
+        $level = new Level();
         $title = 'VIP会员';
-
-        $level->method('getTitle')->willReturn($title);
         $level->setTitle($title);
-
         $this->assertSame($title, $level->getTitle());
     }
 
     public function testSetLevelWithIntegerStoresLevel(): void
     {
-        $level = $this->createMock(Level::class);
+        $level = new Level();
         $levelValue = 3;
-
-        $level->method('getLevel')->willReturn($levelValue);
         $level->setLevel($levelValue);
-
         $this->assertSame($levelValue, $level->getLevel());
     }
 
     public function testIsValidWithDefaultValueReturnsFalse(): void
     {
-        $level = $this->createMock(Level::class);
-        $level->method('isValid')->willReturn(false);
+        $level = new Level();
         $this->assertFalse($level->isValid());
     }
 
     public function testSetValidWithTrueStoresTrue(): void
     {
-        $level = $this->createMock(Level::class);
-        $level->method('isValid')->willReturn(true);
+        $level = new Level();
         $level->setValid(true);
-
         $this->assertTrue($level->isValid());
     }
 
     public function testSetValidWithFalseStoresFalse(): void
     {
-        $level = $this->createMock(Level::class);
-        $level->method('isValid')->willReturn(false);
+        $level = new Level();
         $level->setValid(false);
-
         $this->assertFalse($level->isValid());
     }
 
     public function testSetCreatedByWithValidStringStoresCreatedBy(): void
     {
-        $level = $this->createMock(Level::class);
+        $level = new Level();
         $createdBy = 'admin';
-
-        $level->method('getCreatedBy')->willReturn($createdBy);
         $level->setCreatedBy($createdBy);
-
         $this->assertSame($createdBy, $level->getCreatedBy());
     }
 
     public function testSetUpdatedByWithValidStringStoresUpdatedBy(): void
     {
-        $level = $this->createMock(Level::class);
+        $level = new Level();
         $updatedBy = 'admin';
-
-        $level->method('getUpdatedBy')->willReturn($updatedBy);
         $level->setUpdatedBy($updatedBy);
-
         $this->assertSame($updatedBy, $level->getUpdatedBy());
     }
 
     public function testSetCreateTimeWithDateTimeStoresCreateTime(): void
     {
-        $level = $this->createMock(Level::class);
+        $level = new Level();
         $datetime = new \DateTimeImmutable();
-
-        $level->method('getCreateTime')->willReturn($datetime);
         $level->setCreateTime($datetime);
-
         $this->assertSame($datetime, $level->getCreateTime());
     }
 
     public function testSetUpdateTimeWithDateTimeStoresUpdateTime(): void
     {
-        $level = $this->createMock(Level::class);
+        $level = new Level();
         $datetime = new \DateTimeImmutable();
-
-        $level->method('getUpdateTime')->willReturn($datetime);
         $level->setUpdateTime($datetime);
-
         $this->assertSame($datetime, $level->getUpdateTime());
     }
 
     public function testAddUpgradeRuleWithNewRuleAddsRuleToCollection(): void
     {
-        $level = $this->createMock(Level::class);
-        $upgradeRule = $this->createMock(UpgradeRule::class);
+        $level = new Level();
+        $upgradeRule = new UpgradeRule();
 
-        $level->method('getUpgradeRules')->willReturn(new ArrayCollection([$upgradeRule]));
         $level->addUpgradeRule($upgradeRule);
 
         $this->assertCount(1, $level->getUpgradeRules());
@@ -144,10 +119,9 @@ final class LevelTest extends AbstractEntityTestCase
 
     public function testAddUpgradeRuleWithDuplicateRuleDoesNotAddAgain(): void
     {
-        $level = $this->createMock(Level::class);
-        $upgradeRule = $this->createMock(UpgradeRule::class);
+        $level = new Level();
+        $upgradeRule = new UpgradeRule();
 
-        $level->method('getUpgradeRules')->willReturn(new ArrayCollection([$upgradeRule]));
         $level->addUpgradeRule($upgradeRule);
         $level->addUpgradeRule($upgradeRule);
 
@@ -156,10 +130,9 @@ final class LevelTest extends AbstractEntityTestCase
 
     public function testRemoveUpgradeRuleWithExistingRuleRemovesRuleFromCollection(): void
     {
-        $level = $this->createMock(Level::class);
-        $upgradeRule = $this->createMock(UpgradeRule::class);
+        $level = new Level();
+        $upgradeRule = new UpgradeRule();
 
-        $level->method('getUpgradeRules')->willReturn(new ArrayCollection());
         $level->addUpgradeRule($upgradeRule);
         $level->removeUpgradeRule($upgradeRule);
 
@@ -169,10 +142,9 @@ final class LevelTest extends AbstractEntityTestCase
 
     public function testRemoveUpgradeRuleWithNonExistingRuleDoesNothing(): void
     {
-        $level = $this->createMock(Level::class);
-        $upgradeRule = $this->createMock(UpgradeRule::class);
+        $level = new Level();
+        $upgradeRule = new UpgradeRule();
 
-        $level->method('getUpgradeRules')->willReturn(new ArrayCollection());
         $level->removeUpgradeRule($upgradeRule);
 
         $this->assertCount(0, $level->getUpgradeRules());
@@ -180,18 +152,10 @@ final class LevelTest extends AbstractEntityTestCase
 
     public function testRetrieveAdminArrayReturnsExpectedArray(): void
     {
-        $level = $this->createMock(Level::class);
-        $level->method('getTitle')->willReturn('VIP会员');
-        $level->method('getLevel')->willReturn(3);
-        $level->method('getId')->willReturn(null);
+        $level = new Level();
+        $level->setTitle('VIP会员');
+        $level->setLevel(3);
 
-        $expectedArray = [
-            'level' => 3,
-            'title' => 'VIP会员',
-            'id' => null,
-        ];
-
-        $level->method('retrieveAdminArray')->willReturn($expectedArray);
         $result = $level->retrieveAdminArray();
 
         $this->assertArrayHasKey('level', $result);

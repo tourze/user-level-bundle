@@ -32,8 +32,7 @@ final class UserLevelRelationTest extends AbstractEntityTestCase
 
     public function testGetIdWhenNewInstanceReturnsNull(): void
     {
-        $relation = $this->createMock(UserLevelRelation::class);
-        $relation->method('getId')->willReturn(null);
+        $relation = new UserLevelRelation();
         $this->assertNull($relation->getId());
     }
 
@@ -86,10 +85,9 @@ final class UserLevelRelationTest extends AbstractEntityTestCase
 
     public function testSetCreateTimeWithDateTimeStoresCreateTime(): void
     {
-        $relation = $this->createMock(UserLevelRelation::class);
+        $relation = new UserLevelRelation();
         $datetime = new \DateTimeImmutable();
 
-        $relation->method('getCreateTime')->willReturn($datetime);
         $relation->setCreateTime($datetime);
 
         $this->assertSame($datetime, $relation->getCreateTime());
@@ -97,10 +95,9 @@ final class UserLevelRelationTest extends AbstractEntityTestCase
 
     public function testSetUpdateTimeWithDateTimeStoresUpdateTime(): void
     {
-        $relation = $this->createMock(UserLevelRelation::class);
+        $relation = new UserLevelRelation();
         $datetime = new \DateTimeImmutable();
 
-        $relation->method('getUpdateTime')->willReturn($datetime);
         $relation->setUpdateTime($datetime);
 
         $this->assertSame($datetime, $relation->getUpdateTime());

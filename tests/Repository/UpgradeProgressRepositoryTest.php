@@ -25,6 +25,19 @@ final class UpgradeProgressRepositoryTest extends AbstractRepositoryTestCase
         $this->repository = self::getService(UpgradeProgressRepository::class);
     }
 
+    // 重要：避免跨进程序列化时携带 EntityManager/UnitOfWork
+    // Repository 持有 EntityManager 引用，若不置空，PHPUnit 在子进程结束后
+    // 会序列化整个对象图（包含实体对象和临时生成的用户实体类），
+    // 父进程无法自动加载该临时类，导致 __PHP_Incomplete_Class 赋值到
+    // UpgradeProgress::$user（UserInterface 类型）时报错。
+    protected function onTearDown(): void
+    {
+        // 显式释放仓库引用，避免被序列化
+        unset($this->repository);
+        // 清理 EntityManager 以进一步降低对象图被意外持有的风险
+        self::getEntityManager()->clear();
+    }
+
     /**
      * @return ServiceEntityRepository<UpgradeProgress>
      */
@@ -397,9 +410,8 @@ final class UpgradeProgressRepositoryTest extends AbstractRepositoryTestCase
         $this->repository->save($progress, true);  // 强制flush
 
         $results = $this->repository->createQueryBuilder('up')
-            ->join('up.user', 'u')
-            ->where('u.email = :email')
-            ->setParameter('email', 'join@example.com')
+            ->where('up.user = :user')
+            ->setParameter('user', $user)
             ->getQuery()
             ->getResult()
         ;

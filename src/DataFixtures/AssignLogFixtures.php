@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace UserLevelBundle\DataFixtures;
 
-use BizUserBundle\DataFixtures\BizUserFixtures;
-use BizUserBundle\Entity\BizUser;
-use Carbon\CarbonImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -14,7 +11,7 @@ use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 use Symfony\Component\DependencyInjection\Attribute\When;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Tourze\UserServiceContracts\UserServiceConstants;
+use Tourze\UserServiceContracts\UserManagerInterface;
 use UserLevelBundle\Entity\AssignLog;
 use UserLevelBundle\Entity\Level;
 
@@ -25,6 +22,11 @@ use UserLevelBundle\Entity\Level;
 #[When(env: 'dev')]
 class AssignLogFixtures extends Fixture implements FixtureGroupInterface, DependentFixtureInterface
 {
+    public function __construct(
+        private readonly UserManagerInterface $userManager,
+    ) {
+    }
+
     public static function getGroups(): array
     {
         return ['user-level'];
@@ -33,16 +35,11 @@ class AssignLogFixtures extends Fixture implements FixtureGroupInterface, Depend
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create('zh_CN');
+        $now = new \DateTimeImmutable();
 
-        // 获取用户和等级引用
-        try {
-            $user1 = $this->getReference(UserServiceConstants::NORMAL_USER_REFERENCE_PREFIX . 1, BizUser::class);
-            $user2 = $this->getReference(UserServiceConstants::NORMAL_USER_REFERENCE_PREFIX . 2, BizUser::class);
-        } catch (\Exception $e) {
-            // 如果用户引用不存在，创建测试用户
-            $user1 = $this->createTestUser($manager, 'test1@user-level-test.local');
-            $user2 = $this->createTestUser($manager, 'test2@user-level-test.local');
-        }
+        // 获取或创建测试用户
+        $user1 = $this->getOrCreateTestUser('assignlog-test-user-1', '等级分配测试用户1');
+        $user2 = $this->getOrCreateTestUser('assignlog-test-user-2', '等级分配测试用户2');
 
         try {
             $bronzeLevel = $this->getReference(LevelFixtures::BRONZE_LEVEL_REFERENCE, Level::class);
@@ -61,12 +58,12 @@ class AssignLogFixtures extends Fixture implements FixtureGroupInterface, Depend
         $assignLog1->setOldLevel($bronzeLevel);
         $assignLog1->setNewLevel($silverLevel);
         $assignLog1->setType(1); // 升级
-        $assignLog1->setAssignTime(CarbonImmutable::now()->modify('-10 days'));
+        $assignLog1->setAssignTime($now->modify('-10 days'));
         $assignLog1->setRemark('积分达到升级要求');
         $assignLog1->setCreatedBy('system');
         $assignLog1->setUpdatedBy('system');
-        $assignLog1->setCreateTime(CarbonImmutable::now()->modify('-10 days'));
-        $assignLog1->setUpdateTime(CarbonImmutable::now()->modify('-10 days'));
+        $assignLog1->setCreateTime($now->modify('-10 days'));
+        $assignLog1->setUpdateTime($now->modify('-10 days'));
 
         $manager->persist($assignLog1);
 
@@ -76,12 +73,12 @@ class AssignLogFixtures extends Fixture implements FixtureGroupInterface, Depend
         $assignLog2->setOldLevel($silverLevel);
         $assignLog2->setNewLevel($goldLevel);
         $assignLog2->setType(1); // 升级
-        $assignLog2->setAssignTime(CarbonImmutable::now()->modify('-5 days'));
+        $assignLog2->setAssignTime($now->modify('-5 days'));
         $assignLog2->setRemark('VIP购买升级');
         $assignLog2->setCreatedBy('admin');
         $assignLog2->setUpdatedBy('admin');
-        $assignLog2->setCreateTime(CarbonImmutable::now()->modify('-5 days'));
-        $assignLog2->setUpdateTime(CarbonImmutable::now()->modify('-5 days'));
+        $assignLog2->setCreateTime($now->modify('-5 days'));
+        $assignLog2->setUpdateTime($now->modify('-5 days'));
 
         $manager->persist($assignLog2);
 
@@ -91,12 +88,12 @@ class AssignLogFixtures extends Fixture implements FixtureGroupInterface, Depend
         $assignLog3->setOldLevel($silverLevel);
         $assignLog3->setNewLevel($bronzeLevel);
         $assignLog3->setType(0); // 降级
-        $assignLog3->setAssignTime(CarbonImmutable::now()->modify('-2 days'));
+        $assignLog3->setAssignTime($now->modify('-2 days'));
         $assignLog3->setRemark('违规行为导致降级');
         $assignLog3->setCreatedBy('moderator');
         $assignLog3->setUpdatedBy('moderator');
-        $assignLog3->setCreateTime(CarbonImmutable::now()->modify('-2 days'));
-        $assignLog3->setUpdateTime(CarbonImmutable::now()->modify('-2 days'));
+        $assignLog3->setCreateTime($now->modify('-2 days'));
+        $assignLog3->setUpdateTime($now->modify('-2 days'));
 
         $manager->persist($assignLog3);
 
@@ -104,17 +101,18 @@ class AssignLogFixtures extends Fixture implements FixtureGroupInterface, Depend
     }
 
     /**
-     * 创建测试用户
+     * 获取或创建测试用户
      */
-    private function createTestUser(ObjectManager $manager, string $email): UserInterface
+    private function getOrCreateTestUser(string $userIdentifier, string $nickName): UserInterface
     {
-        // 创建一个简单的用户对象用于测试
-        $user = new BizUser();
-        $user->setEmail($email);
-        $user->setUsername('test_user_' . uniqid());
-        $user->setPasswordHash('password123');
-        $user->setNickName('Test User');
-        $manager->persist($user);
+        // 尝试加载已存在的用户
+        $user = $this->userManager->loadUserByIdentifier($userIdentifier);
+
+        // 如果用户不存在，创建一个新的测试用户
+        if (null === $user) {
+            $user = $this->userManager->createUser($userIdentifier, $nickName);
+            $this->userManager->saveUser($user);
+        }
 
         return $user;
     }
@@ -140,7 +138,6 @@ class AssignLogFixtures extends Fixture implements FixtureGroupInterface, Depend
     public function getDependencies(): array
     {
         return [
-            BizUserFixtures::class,
             LevelFixtures::class,
         ];
     }

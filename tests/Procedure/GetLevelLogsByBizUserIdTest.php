@@ -2,7 +2,6 @@
 
 namespace UserLevelBundle\Tests\Procedure;
 
-use BizUserBundle\Entity\BizUser;
 use Knp\Component\Pager\PaginatorInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -72,12 +71,8 @@ final class GetLevelLogsByBizUserIdTest extends AbstractProcedureTestCase
         $this->persistAndFlush($level1);
         $this->persistAndFlush($level2);
 
-        // 创建一个简单的 BizUser 对象用于测试
-        $user = new BizUser();
-        $user->setUsername('test-user-' . uniqid());
-        $user->setNickName('Test User');
-
-        $this->persistAndFlush($user);
+        // 创建一个简单的测试用户对象
+        $user = $this->createNormalUser('test-user-' . uniqid(), 'password123');
 
         $log = new AssignLog();
         $log->setNewLevel($level1);

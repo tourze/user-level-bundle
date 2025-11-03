@@ -26,6 +26,13 @@ final class UserLevelRelationRepositoryTest extends AbstractRepositoryTestCase
         $this->repository = self::getService(UserLevelRelationRepository::class);
     }
 
+    // 避免跨进程序列化时携带 EntityManager/UnitOfWork
+    protected function onTearDown(): void
+    {
+        unset($this->repository);
+        self::getEntityManager()->clear();
+    }
+
     /**
      * @return ServiceEntityRepository<UserLevelRelation>
      */
@@ -434,10 +441,10 @@ final class UserLevelRelationRepositoryTest extends AbstractRepositoryTestCase
             ->join('ulr.user', 'u')
             ->where('ulr.valid = :valid')
             ->andWhere('l.valid = :levelValid')
-            ->andWhere('u.email IN (:userEmails)')
+            ->andWhere('ulr.user IN (:users)')
             ->setParameter('valid', true)
             ->setParameter('levelValid', true)
-            ->setParameter('userEmails', ['active_user1@example.com', 'active_user2@example.com'])
+            ->setParameter('users', [$user1, $user2])
             ->orderBy('l.level', 'ASC')
         ;
 
@@ -508,8 +515,8 @@ final class UserLevelRelationRepositoryTest extends AbstractRepositoryTestCase
         // 测试按 user email 关联查询
         $qb = $this->repository->createQueryBuilder('ulr')
             ->join('ulr.user', 'u')
-            ->where('u.email = :userEmail')
-            ->setParameter('userEmail', 'multi_user1@example.com')
+            ->where('ulr.user = :user')
+            ->setParameter('user', $user1)
         ;
         $userEmailRelations = $qb->getQuery()->getResult();
         $this->assertIsArray($userEmailRelations);
@@ -581,8 +588,8 @@ final class UserLevelRelationRepositoryTest extends AbstractRepositoryTestCase
 
         $qb = $this->repository->createQueryBuilder('ulr')
             ->join('ulr.user', 'u')
-            ->where('u.email = :userEmail')
-            ->setParameter('userEmail', 'assoc_user1@example.com')
+            ->where('ulr.user = :user')
+            ->setParameter('user', $user1)
         ;
         $user1Relations = $qb->getQuery()->getResult();
         $this->assertIsArray($user1Relations);
@@ -606,8 +613,8 @@ final class UserLevelRelationRepositoryTest extends AbstractRepositoryTestCase
         $qb = $this->repository->createQueryBuilder('ulr')
             ->select('COUNT(ulr.id)')
             ->join('ulr.user', 'u')
-            ->where('u.email = :userEmail')
-            ->setParameter('userEmail', 'count_user1@example.com')
+            ->where('ulr.user = :user')
+            ->setParameter('user', $user1)
         ;
         $count = (int) $qb->getQuery()->getSingleScalarResult();
 
@@ -624,8 +631,8 @@ final class UserLevelRelationRepositoryTest extends AbstractRepositoryTestCase
         $qb = $this->repository->createQueryBuilder('ulr')
             ->select('COUNT(ulr.id)')
             ->join('ulr.user', 'u')
-            ->where('u.email = :userEmail')
-            ->setParameter('userEmail', $user->getUserIdentifier())
+            ->where('ulr.user = :user')
+            ->setParameter('user', $user)
         ;
         $count = (int) $qb->getQuery()->getSingleScalarResult();
         $this->assertGreaterThanOrEqual(1, $count);
@@ -640,9 +647,9 @@ final class UserLevelRelationRepositoryTest extends AbstractRepositoryTestCase
 
         $qb = $this->repository->createQueryBuilder('ulr')
             ->join('ulr.user', 'u')
-            ->where('u.email = :userEmail')
+            ->where('ulr.user = :user')
             ->andWhere('ulr.id = :relationId')
-            ->setParameter('userEmail', $user->getUserIdentifier())
+            ->setParameter('user', $user)
             ->setParameter('relationId', $relation->getId())
             ->setMaxResults(1)
         ;

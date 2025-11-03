@@ -27,6 +27,13 @@ final class LevelRepositoryTest extends AbstractRepositoryTestCase
         $this->repository = self::getService(LevelRepository::class);
     }
 
+    // 避免跨进程序列化时携带 EntityManager/UnitOfWork
+    protected function onTearDown(): void
+    {
+        unset($this->repository);
+        self::getEntityManager()->clear();
+    }
+
     /**
      * @return ServiceEntityRepository<Level>
      */

@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace UserLevelBundle\DataFixtures;
 
-use BizUserBundle\DataFixtures\BizUserFixtures;
-use BizUserBundle\Entity\BizUser;
-use Carbon\CarbonImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\Attribute\When;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Tourze\UserServiceContracts\UserServiceConstants;
+use Tourze\UserServiceContracts\UserManagerInterface;
 use UserLevelBundle\Entity\Level;
 use UserLevelBundle\Entity\UpgradeProgress;
 use UserLevelBundle\Entity\UpgradeRule;
@@ -25,6 +22,11 @@ use UserLevelBundle\Entity\UpgradeRule;
 #[When(env: 'dev')]
 class UpgradeProgressFixtures extends Fixture implements FixtureGroupInterface, DependentFixtureInterface
 {
+    public function __construct(
+        private readonly UserManagerInterface $userManager,
+    ) {
+    }
+
     public static function getGroups(): array
     {
         return ['user-level'];
@@ -32,17 +34,10 @@ class UpgradeProgressFixtures extends Fixture implements FixtureGroupInterface, 
 
     public function load(ObjectManager $manager): void
     {
-        // 获取用户和升级规则引用
-        try {
-            $user1 = $this->getReference(UserServiceConstants::NORMAL_USER_REFERENCE_PREFIX . 1, BizUser::class);
-            $user2 = $this->getReference(UserServiceConstants::NORMAL_USER_REFERENCE_PREFIX . 2, BizUser::class);
-            $user3 = $this->getReference(UserServiceConstants::NORMAL_USER_REFERENCE_PREFIX . 3, BizUser::class);
-        } catch (\Exception $e) {
-            // 如果用户引用不存在，创建测试用户
-            $user1 = $this->createTestUser($manager, 'test1@user-level-test.local');
-            $user2 = $this->createTestUser($manager, 'test2@user-level-test.local');
-            $user3 = $this->createTestUser($manager, 'test3@user-level-test.local');
-        }
+        // 获取或创建测试用户
+        $user1 = $this->getOrCreateTestUser('upgrade-progress-test-user-1', '升级进度测试用户1');
+        $user2 = $this->getOrCreateTestUser('upgrade-progress-test-user-2', '升级进度测试用户2');
+        $user3 = $this->getOrCreateTestUser('upgrade-progress-test-user-3', '升级进度测试用户3');
 
         try {
             $pointsRule = $this->getReference(UpgradeRuleFixtures::POINTS_RULE_REFERENCE, UpgradeRule::class);
@@ -55,7 +50,7 @@ class UpgradeProgressFixtures extends Fixture implements FixtureGroupInterface, 
             $referralRule = $this->createTestUpgradeRule($manager, 3, '推荐规则');
         }
 
-        $now = CarbonImmutable::now();
+        $now = new \DateTimeImmutable();
 
         // 用户1的积分进度
         $progress1 = new UpgradeProgress();
@@ -91,16 +86,18 @@ class UpgradeProgressFixtures extends Fixture implements FixtureGroupInterface, 
     }
 
     /**
-     * 创建测试用户
+     * 获取或创建测试用户
      */
-    private function createTestUser(ObjectManager $manager, string $email): UserInterface
+    private function getOrCreateTestUser(string $userIdentifier, string $nickName): UserInterface
     {
-        $user = new BizUser();
-        $user->setEmail($email);
-        $user->setUsername('test_user_' . uniqid());
-        $user->setPasswordHash('password123');
-        $user->setNickName('Test User');
-        $manager->persist($user);
+        // 尝试加载已存在的用户
+        $user = $this->userManager->loadUserByIdentifier($userIdentifier);
+
+        // 如果用户不存在，创建一个新的测试用户
+        if (null === $user) {
+            $user = $this->userManager->createUser($userIdentifier, $nickName);
+            $this->userManager->saveUser($user);
+        }
 
         return $user;
     }
@@ -145,7 +142,6 @@ class UpgradeProgressFixtures extends Fixture implements FixtureGroupInterface, 
     public function getDependencies(): array
     {
         return [
-            BizUserFixtures::class,
             UpgradeRuleFixtures::class,
         ];
     }

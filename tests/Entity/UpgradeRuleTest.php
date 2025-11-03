@@ -33,17 +33,15 @@ final class UpgradeRuleTest extends AbstractEntityTestCase
 
     public function testGetIdWhenNewInstanceReturnsNull(): void
     {
-        $rule = $this->createMock(UpgradeRule::class);
-        $rule->method('getId')->willReturn(null);
+        $rule = new UpgradeRule();
         $this->assertNull($rule->getId());
     }
 
     public function testSetTitleWithValidTitleStoresTitle(): void
     {
-        $rule = $this->createMock(UpgradeRule::class);
+        $rule = new UpgradeRule();
         $title = '消费金额';
 
-        $rule->method('getTitle')->willReturn($title);
         $rule->setTitle($title);
 
         $this->assertSame($title, $rule->getTitle());
@@ -51,10 +49,9 @@ final class UpgradeRuleTest extends AbstractEntityTestCase
 
     public function testSetValueWithIntegerStoresValue(): void
     {
-        $rule = $this->createMock(UpgradeRule::class);
+        $rule = new UpgradeRule();
         $value = 10000;
 
-        $rule->method('getValue')->willReturn($value);
         $rule->setValue($value);
 
         $this->assertSame($value, $rule->getValue());
@@ -62,8 +59,7 @@ final class UpgradeRuleTest extends AbstractEntityTestCase
 
     public function testSetValueWithNullStoresNull(): void
     {
-        $rule = $this->createMock(UpgradeRule::class);
-        $rule->method('getValue')->willReturn(0);
+        $rule = new UpgradeRule();
         $rule->setValue(0);
 
         $this->assertEquals(0, $rule->getValue());
@@ -71,10 +67,12 @@ final class UpgradeRuleTest extends AbstractEntityTestCase
 
     public function testSetLevelWithLevelObjectStoresLevel(): void
     {
-        $rule = $this->createMock(UpgradeRule::class);
-        $level = $this->createMock(Level::class);
+        $rule = new UpgradeRule();
+        $level = new Level();
+        $level->setLevel(1);
+        $level->setTitle('VIP1');
+        $level->setValid(true);
 
-        $rule->method('getLevel')->willReturn($level);
         $rule->setLevel($level);
 
         $this->assertSame($level, $rule->getLevel());
@@ -82,15 +80,13 @@ final class UpgradeRuleTest extends AbstractEntityTestCase
 
     public function testIsValidWithDefaultValueReturnsFalse(): void
     {
-        $rule = $this->createMock(UpgradeRule::class);
-        $rule->method('isValid')->willReturn(false);
+        $rule = new UpgradeRule();
         $this->assertFalse($rule->isValid());
     }
 
     public function testSetValidWithTrueStoresTrue(): void
     {
-        $rule = $this->createMock(UpgradeRule::class);
-        $rule->method('isValid')->willReturn(true);
+        $rule = new UpgradeRule();
         $rule->setValid(true);
 
         $this->assertTrue($rule->isValid());
@@ -98,8 +94,7 @@ final class UpgradeRuleTest extends AbstractEntityTestCase
 
     public function testSetValidWithFalseStoresFalse(): void
     {
-        $rule = $this->createMock(UpgradeRule::class);
-        $rule->method('isValid')->willReturn(false);
+        $rule = new UpgradeRule();
         $rule->setValid(false);
 
         $this->assertFalse($rule->isValid());
@@ -107,10 +102,9 @@ final class UpgradeRuleTest extends AbstractEntityTestCase
 
     public function testSetCreatedByWithValidStringStoresCreatedBy(): void
     {
-        $rule = $this->createMock(UpgradeRule::class);
+        $rule = new UpgradeRule();
         $createdBy = 'admin';
 
-        $rule->method('getCreatedBy')->willReturn($createdBy);
         $rule->setCreatedBy($createdBy);
 
         $this->assertSame($createdBy, $rule->getCreatedBy());
@@ -118,10 +112,9 @@ final class UpgradeRuleTest extends AbstractEntityTestCase
 
     public function testSetUpdatedByWithValidStringStoresUpdatedBy(): void
     {
-        $rule = $this->createMock(UpgradeRule::class);
+        $rule = new UpgradeRule();
         $updatedBy = 'admin';
 
-        $rule->method('getUpdatedBy')->willReturn($updatedBy);
         $rule->setUpdatedBy($updatedBy);
 
         $this->assertSame($updatedBy, $rule->getUpdatedBy());
@@ -129,10 +122,9 @@ final class UpgradeRuleTest extends AbstractEntityTestCase
 
     public function testSetCreateTimeWithDateTimeStoresCreateTime(): void
     {
-        $rule = $this->createMock(UpgradeRule::class);
+        $rule = new UpgradeRule();
         $datetime = new \DateTimeImmutable();
 
-        $rule->method('getCreateTime')->willReturn($datetime);
         $rule->setCreateTime($datetime);
 
         $this->assertSame($datetime, $rule->getCreateTime());
@@ -140,10 +132,9 @@ final class UpgradeRuleTest extends AbstractEntityTestCase
 
     public function testSetUpdateTimeWithDateTimeStoresUpdateTime(): void
     {
-        $rule = $this->createMock(UpgradeRule::class);
+        $rule = new UpgradeRule();
         $datetime = new \DateTimeImmutable();
 
-        $rule->method('getUpdateTime')->willReturn($datetime);
         $rule->setUpdateTime($datetime);
 
         $this->assertSame($datetime, $rule->getUpdateTime());
@@ -151,8 +142,7 @@ final class UpgradeRuleTest extends AbstractEntityTestCase
 
     public function testSetCreatedByWithNullStoresNull(): void
     {
-        $rule = $this->createMock(UpgradeRule::class);
-        $rule->method('getCreatedBy')->willReturn(null);
+        $rule = new UpgradeRule();
         $rule->setCreatedBy(null);
 
         $this->assertNull($rule->getCreatedBy());
@@ -160,8 +150,7 @@ final class UpgradeRuleTest extends AbstractEntityTestCase
 
     public function testSetUpdatedByWithNullStoresNull(): void
     {
-        $rule = $this->createMock(UpgradeRule::class);
-        $rule->method('getUpdatedBy')->willReturn(null);
+        $rule = new UpgradeRule();
         $rule->setUpdatedBy(null);
 
         $this->assertNull($rule->getUpdatedBy());

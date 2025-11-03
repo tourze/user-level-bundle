@@ -32,17 +32,19 @@ final class UpgradeProgressTest extends AbstractEntityTestCase
 
     public function testGetIdWhenNewInstanceReturnsNull(): void
     {
-        $progress = $this->createMock(UpgradeProgress::class);
-        $progress->method('getId')->willReturn(null);
+        $progress = new UpgradeProgress();
         $this->assertNull($progress->getId());
     }
 
     public function testSetUserWithUserObjectStoresUser(): void
     {
-        $progress = $this->createMock(UpgradeProgress::class);
-        $user = $this->createMock(UserInterface::class);
+        $progress = new UpgradeProgress();
+        $user = new class() implements UserInterface {
+            public function getRoles(): array { return ['ROLE_USER']; }
+            public function eraseCredentials(): void {}
+            public function getUserIdentifier(): string { return 'testuser'; }
+        };
 
-        $progress->method('getUser')->willReturn($user);
         $progress->setUser($user);
 
         $this->assertSame($user, $progress->getUser());
@@ -50,10 +52,10 @@ final class UpgradeProgressTest extends AbstractEntityTestCase
 
     public function testSetUpgradeRuleWithRuleObjectStoresRule(): void
     {
-        $progress = $this->createMock(UpgradeProgress::class);
-        $rule = $this->createMock(UpgradeRule::class);
+        $progress = new UpgradeProgress();
+        $rule = new UpgradeRule();
+        $rule->setTitle('test_rule');
 
-        $progress->method('getUpgradeRule')->willReturn($rule);
         $progress->setUpgradeRule($rule);
 
         $this->assertSame($rule, $progress->getUpgradeRule());
@@ -61,10 +63,9 @@ final class UpgradeProgressTest extends AbstractEntityTestCase
 
     public function testSetValueWithIntegerStoresValue(): void
     {
-        $progress = $this->createMock(UpgradeProgress::class);
+        $progress = new UpgradeProgress();
         $value = 5000;
 
-        $progress->method('getValue')->willReturn($value);
         $progress->setValue($value);
 
         $this->assertSame($value, $progress->getValue());
@@ -72,8 +73,7 @@ final class UpgradeProgressTest extends AbstractEntityTestCase
 
     public function testSetValueWithNullStoresNull(): void
     {
-        $progress = $this->createMock(UpgradeProgress::class);
-        $progress->method('getValue')->willReturn(null);
+        $progress = new UpgradeProgress();
         $progress->setValue(null);
 
         $this->assertNull($progress->getValue());
@@ -81,10 +81,9 @@ final class UpgradeProgressTest extends AbstractEntityTestCase
 
     public function testSetCreateTimeWithDateTimeStoresCreateTime(): void
     {
-        $progress = $this->createMock(UpgradeProgress::class);
+        $progress = new UpgradeProgress();
         $datetime = new \DateTimeImmutable();
 
-        $progress->method('getCreateTime')->willReturn($datetime);
         $progress->setCreateTime($datetime);
 
         $this->assertSame($datetime, $progress->getCreateTime());
@@ -92,10 +91,9 @@ final class UpgradeProgressTest extends AbstractEntityTestCase
 
     public function testSetUpdateTimeWithDateTimeStoresUpdateTime(): void
     {
-        $progress = $this->createMock(UpgradeProgress::class);
+        $progress = new UpgradeProgress();
         $datetime = new \DateTimeImmutable();
 
-        $progress->method('getUpdateTime')->willReturn($datetime);
         $progress->setUpdateTime($datetime);
 
         $this->assertSame($datetime, $progress->getUpdateTime());

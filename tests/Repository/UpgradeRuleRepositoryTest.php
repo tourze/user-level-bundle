@@ -24,6 +24,13 @@ final class UpgradeRuleRepositoryTest extends AbstractRepositoryTestCase
         $this->repository = self::getService(UpgradeRuleRepository::class);
     }
 
+    // 避免跨进程序列化时携带 EntityManager/UnitOfWork
+    protected function onTearDown(): void
+    {
+        unset($this->repository);
+        self::getEntityManager()->clear();
+    }
+
     /**
      * @return ServiceEntityRepository<UpgradeRule>
      */

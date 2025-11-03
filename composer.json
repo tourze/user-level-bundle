@@ -31,7 +31,8 @@
     "tourze/json-rpc-log-bundle": "1.0.*",
     "tourze/json-rpc-paginator-bundle": "1.0.*",
     "tourze/symfony-dependency-service-loader": "1.0.*",
-    "tourze/symfony-routing-auto-loader-bundle": "1.0.*"
+    "tourze/symfony-routing-auto-loader-bundle": "1.0.*",
+    "tourze/user-service-contracts": "1.*"
   },
   "require-dev": {
     "doctrine/data-fixtures": "^2.0",
@@ -41,12 +42,10 @@
     "phpunit/phpunit": "^11.5",
     "symfony/framework-bundle": "^7.3",
     "symfony/security-bundle": "^7.3",
-    "tourze/biz-user-bundle": "0.0.*",
     "tourze/phpunit-doctrine-entity": "1.*",
     "tourze/phpunit-symfony-kernel-test": "1.0.*",
     "tourze/phpunit-symfony-unit-test": "1.*",
-    "tourze/phpunit-symfony-web-test": "1.*",
-    "tourze/user-service-contracts": "1.*"
+    "tourze/phpunit-symfony-web-test": "1.*"
   },
   "autoload": {
     "psr-4": {
