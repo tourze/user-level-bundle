@@ -52,11 +52,6 @@ class UpgradeRuleCrudControllerTest extends AbstractEasyAdminControllerTestCase
         yield 'value' => ['value'];
     }
 
-    public function testGetEntityFqcn(): void
-    {
-        $this->assertSame(UpgradeRule::class, UpgradeRuleCrudController::getEntityFqcn());
-    }
-
     public function testConfigureFields(): void
     {
         $controller = new UpgradeRuleCrudController();

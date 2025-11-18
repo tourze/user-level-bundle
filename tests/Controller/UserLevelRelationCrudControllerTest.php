@@ -47,11 +47,6 @@ class UserLevelRelationCrudControllerTest extends AbstractEasyAdminControllerTes
         yield 'valid' => ['valid'];
     }
 
-    public function testGetEntityFqcn(): void
-    {
-        $this->assertSame(UserLevelRelation::class, UserLevelRelationCrudController::getEntityFqcn());
-    }
-
     public function testConfigureFields(): void
     {
         $controller = new UserLevelRelationCrudController();

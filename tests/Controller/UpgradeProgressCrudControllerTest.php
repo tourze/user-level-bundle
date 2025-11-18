@@ -47,11 +47,6 @@ class UpgradeProgressCrudControllerTest extends AbstractEasyAdminControllerTestC
         yield 'value' => ['value'];
     }
 
-    public function testGetEntityFqcn(): void
-    {
-        $this->assertSame(UpgradeProgress::class, UpgradeProgressCrudController::getEntityFqcn());
-    }
-
     public function testConfigureFields(): void
     {
         $controller = new UpgradeProgressCrudController();

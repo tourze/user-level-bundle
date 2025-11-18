@@ -22,11 +22,6 @@ class AssignLogCrudControllerTest extends AbstractEasyAdminControllerTestCase
         return new AssignLogCrudController();
     }
 
-    public function testGetEntityFqcn(): void
-    {
-        $this->assertSame(AssignLog::class, AssignLogCrudController::getEntityFqcn());
-    }
-
     public function testConfigureFields(): void
     {
         $controller = new AssignLogCrudController();

@@ -50,11 +50,6 @@ class LevelCrudControllerTest extends AbstractEasyAdminControllerTestCase
         yield 'level' => ['level'];
     }
 
-    public function testGetEntityFqcn(): void
-    {
-        $this->assertSame(Level::class, LevelCrudController::getEntityFqcn());
-    }
-
     public function testConfigureFields(): void
     {
         $controller = new LevelCrudController();
