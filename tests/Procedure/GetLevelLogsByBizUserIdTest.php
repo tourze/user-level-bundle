@@ -5,9 +5,11 @@ namespace UserLevelBundle\Tests\Procedure;
 use Knp\Component\Pager\PaginatorInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
-use Tourze\JsonRPC\Core\Tests\AbstractProcedureTestCase;
+use Tourze\JsonRPC\Core\Result\ArrayResult;
+use Tourze\PHPUnitJsonRPC\AbstractProcedureTestCase;
 use UserLevelBundle\Entity\AssignLog;
 use UserLevelBundle\Entity\Level;
+use UserLevelBundle\Param\GetLevelLogsByBizUserIdParam;
 use UserLevelBundle\Procedure\GetLevelLogsByBizUserId;
 
 /**
@@ -30,30 +32,36 @@ final class GetLevelLogsByBizUserIdTest extends AbstractProcedureTestCase
         $this->assertInstanceOf(GetLevelLogsByBizUserId::class, $this->procedure);
     }
 
-    public function testUserIdPropertyCanBeSet(): void
+    public function testCreateParam(): void
     {
-        $this->procedure->userId = 'user123';
-        $this->assertEquals('user123', $this->procedure->userId);
+        $param = new GetLevelLogsByBizUserIdParam('user123');
+        $this->assertEquals('user123', $param->userId);
+        $this->assertEquals(10, $param->pageSize); // 默认值
+        $this->assertEquals(1, $param->currentPage); // 默认值
     }
 
     public function testExecute(): void
     {
-        $this->procedure->userId = 'test-user-id';
-        $result = $this->procedure->execute();
+        $param = new GetLevelLogsByBizUserIdParam('test-user-id');
+        $result = $this->procedure->execute($param);
 
-        $this->assertIsArray($result);
-        $this->assertArrayHasKey('list', $result);
-        $this->assertArrayHasKey('pagination', $result);
+        $this->assertInstanceOf(ArrayResult::class, $result);
+        $data = $result->toArray();
+        $this->assertIsArray($data);
+        $this->assertArrayHasKey('list', $data);
+        $this->assertArrayHasKey('pagination', $data);
     }
 
     public function testExecuteWithEmptyUserId(): void
     {
-        $this->procedure->userId = '';
-        $result = $this->procedure->execute();
+        $param = new GetLevelLogsByBizUserIdParam('');
+        $result = $this->procedure->execute($param);
 
-        $this->assertIsArray($result);
-        $this->assertArrayHasKey('list', $result);
-        $this->assertArrayHasKey('pagination', $result);
+        $this->assertInstanceOf(ArrayResult::class, $result);
+        $data = $result->toArray();
+        $this->assertIsArray($data);
+        $this->assertArrayHasKey('list', $data);
+        $this->assertArrayHasKey('pagination', $data);
     }
 
     public function testFormatItem(): void

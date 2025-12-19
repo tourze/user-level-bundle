@@ -346,7 +346,6 @@ final class AssignLogRepositoryTest extends AbstractRepositoryTestCase
         return $levelEntity;
     }
 
-
     protected function createNewEntity(): object
     {
         $entity = new AssignLog();

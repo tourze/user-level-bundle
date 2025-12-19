@@ -11,7 +11,7 @@ use UserLevelBundle\Entity\UpgradeRule;
  * @extends ServiceEntityRepository<UpgradeRule>
  */
 #[AsRepository(entityClass: UpgradeRule::class)]
-class UpgradeRuleRepository extends ServiceEntityRepository
+final class UpgradeRuleRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {

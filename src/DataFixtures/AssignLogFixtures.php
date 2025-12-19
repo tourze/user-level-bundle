@@ -46,10 +46,10 @@ class AssignLogFixtures extends Fixture implements FixtureGroupInterface, Depend
             $silverLevel = $this->getReference(LevelFixtures::SILVER_LEVEL_REFERENCE, Level::class);
             $goldLevel = $this->getReference(LevelFixtures::GOLD_LEVEL_REFERENCE, Level::class);
         } catch (\Exception $e) {
-            // 如果等级引用不存在，创建测试等级
-            $bronzeLevel = $this->createTestLevel($manager, 1, 'Bronze Level');
-            $silverLevel = $this->createTestLevel($manager, 2, 'Silver Level');
-            $goldLevel = $this->createTestLevel($manager, 3, 'Gold Level');
+            // 如果等级引用不存在，创建测试等级（使用大数值避免与 LevelFixtures 冲突）
+            $bronzeLevel = $this->createTestLevel($manager, 100001, 'Bronze Level');
+            $silverLevel = $this->createTestLevel($manager, 100002, 'Silver Level');
+            $goldLevel = $this->createTestLevel($manager, 100003, 'Gold Level');
         }
 
         // 创建用户1从铜牌升级到银牌的记录

@@ -38,15 +38,13 @@ final class UserLevelRelationTest extends AbstractEntityTestCase
 
     public function testIsValidWithDefaultValueReturnsFalse(): void
     {
-        $relation = $this->createMock(UserLevelRelation::class);
-        $relation->method('isValid')->willReturn(false);
+        $relation = new UserLevelRelation();
         $this->assertFalse($relation->isValid());
     }
 
     public function testSetValidWithTrueStoresTrue(): void
     {
-        $relation = $this->createMock(UserLevelRelation::class);
-        $relation->method('isValid')->willReturn(true);
+        $relation = new UserLevelRelation();
         $relation->setValid(true);
 
         $this->assertTrue($relation->isValid());
@@ -54,8 +52,7 @@ final class UserLevelRelationTest extends AbstractEntityTestCase
 
     public function testSetValidWithFalseStoresFalse(): void
     {
-        $relation = $this->createMock(UserLevelRelation::class);
-        $relation->method('isValid')->willReturn(false);
+        $relation = new UserLevelRelation();
         $relation->setValid(false);
 
         $this->assertFalse($relation->isValid());
@@ -63,10 +60,11 @@ final class UserLevelRelationTest extends AbstractEntityTestCase
 
     public function testSetLevelWithLevelObjectStoresLevel(): void
     {
-        $relation = $this->createMock(UserLevelRelation::class);
-        $level = $this->createMock(Level::class);
+        $relation = new UserLevelRelation();
+        $level = new Level();
+        $level->setTitle('Test Level');
+        $level->setLevel(1);
 
-        $relation->method('getLevel')->willReturn($level);
         $relation->setLevel($level);
 
         $this->assertSame($level, $relation->getLevel());
@@ -74,10 +72,43 @@ final class UserLevelRelationTest extends AbstractEntityTestCase
 
     public function testSetUserWithUserObjectStoresUser(): void
     {
-        $relation = $this->createMock(UserLevelRelation::class);
-        $user = $this->createMock(UserInterface::class);
+        $relation = new UserLevelRelation();
+        $user = new class implements UserInterface {
+            public function getRoles(): array
+            {
+                return ['ROLE_USER'];
+            }
 
-        $relation->method('getUser')->willReturn($user);
+            public function getPassword(?string $service = null): ?string
+            {
+                return null;
+            }
+
+            public function getSalt(): ?string
+            {
+                return null;
+            }
+
+            public function getUsername(): string
+            {
+                return 'test@example.com';
+            }
+
+            public function eraseCredentials(): void
+            {
+            }
+
+            public function getUserIdentifier(): string
+            {
+                return 'test@example.com';
+            }
+
+            public function getPasswordSalt(): ?string
+            {
+                return null;
+            }
+        };
+
         $relation->setUser($user);
 
         $this->assertSame($user, $relation->getUser());

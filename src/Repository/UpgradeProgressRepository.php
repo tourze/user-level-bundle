@@ -11,7 +11,7 @@ use UserLevelBundle\Entity\UpgradeProgress;
  * @extends ServiceEntityRepository<UpgradeProgress>
  */
 #[AsRepository(entityClass: UpgradeProgress::class)]
-class UpgradeProgressRepository extends ServiceEntityRepository
+final class UpgradeProgressRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {

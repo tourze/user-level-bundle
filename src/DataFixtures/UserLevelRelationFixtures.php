@@ -43,12 +43,12 @@ class UserLevelRelationFixtures extends Fixture implements FixtureGroupInterface
             $platinumLevel = $this->getReference(LevelFixtures::PLATINUM_LEVEL_REFERENCE, Level::class);
             $diamondLevel = $this->getReference(LevelFixtures::DIAMOND_LEVEL_REFERENCE, Level::class);
         } catch (\Exception $e) {
-            // 如果等级引用不存在，创建测试等级
-            $bronzeLevel = $this->createTestLevel($manager, 1, '铜牌会员');
-            $silverLevel = $this->createTestLevel($manager, 2, '银牌会员');
-            $goldLevel = $this->createTestLevel($manager, 3, '金牌会员');
-            $platinumLevel = $this->createTestLevel($manager, 4, '铂金会员');
-            $diamondLevel = $this->createTestLevel($manager, 5, '钻石会员');
+            // 如果等级引用不存在，创建测试等级（使用大数值避免与 LevelFixtures 冲突）
+            $bronzeLevel = $this->createTestLevel($manager, 400001, '铜牌会员');
+            $silverLevel = $this->createTestLevel($manager, 400002, '银牌会员');
+            $goldLevel = $this->createTestLevel($manager, 400003, '金牌会员');
+            $platinumLevel = $this->createTestLevel($manager, 400004, '铂金会员');
+            $diamondLevel = $this->createTestLevel($manager, 400005, '钻石会员');
         }
 
         // 获取或创建测试用户

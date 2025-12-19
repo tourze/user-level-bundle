@@ -44,10 +44,10 @@ class UpgradeProgressFixtures extends Fixture implements FixtureGroupInterface, 
             $purchaseRule = $this->getReference(UpgradeRuleFixtures::PURCHASE_RULE_REFERENCE, UpgradeRule::class);
             $referralRule = $this->getReference(UpgradeRuleFixtures::REFERRAL_RULE_REFERENCE, UpgradeRule::class);
         } catch (\Exception $e) {
-            // 如果升级规则引用不存在，创建测试规则
-            $pointsRule = $this->createTestUpgradeRule($manager, 1, '积分规则');
-            $purchaseRule = $this->createTestUpgradeRule($manager, 2, '购买规则');
-            $referralRule = $this->createTestUpgradeRule($manager, 3, '推荐规则');
+            // 如果升级规则引用不存在，创建测试规则（使用大数值避免冲突）
+            $pointsRule = $this->createTestUpgradeRule($manager, 200001, '积分规则');
+            $purchaseRule = $this->createTestUpgradeRule($manager, 200002, '购买规则');
+            $referralRule = $this->createTestUpgradeRule($manager, 200003, '推荐规则');
         }
 
         $now = new \DateTimeImmutable();

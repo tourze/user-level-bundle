@@ -17,26 +17,12 @@ use UserLevelBundle\Entity\AssignLog;
 #[RunTestsInSeparateProcesses]
 class AssignLogCrudControllerTest extends AbstractEasyAdminControllerTestCase
 {
-    protected function getControllerService(): AssignLogCrudController
+    protected function getControllerService(): \EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController
     {
         return new AssignLogCrudController();
     }
 
-    public function testConfigureFields(): void
-    {
-        $controller = new AssignLogCrudController();
-        $fields = iterator_to_array($controller->configureFields('index'));
-
-        $this->assertNotEmpty($fields);
-        $this->assertGreaterThan(0, count($fields));
-    }
-
-    public function testControllerCanBeInstantiated(): void
-    {
-        $controller = new AssignLogCrudController();
-        $this->assertInstanceOf(AssignLogCrudController::class, $controller);
-    }
-
+    
     /** @return \Generator<string, array{string}> */
     public static function provideIndexPageHeaders(): \Generator
     {

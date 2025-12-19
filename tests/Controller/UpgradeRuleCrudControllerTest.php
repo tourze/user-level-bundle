@@ -17,7 +17,7 @@ use UserLevelBundle\Entity\UpgradeRule;
 #[RunTestsInSeparateProcesses]
 class UpgradeRuleCrudControllerTest extends AbstractEasyAdminControllerTestCase
 {
-    protected function getControllerService(): UpgradeRuleCrudController
+    protected function getControllerService(): \EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController
     {
         return new UpgradeRuleCrudController();
     }
@@ -50,20 +50,5 @@ class UpgradeRuleCrudControllerTest extends AbstractEasyAdminControllerTestCase
     {
         yield 'title' => ['title'];
         yield 'value' => ['value'];
-    }
-
-    public function testConfigureFields(): void
-    {
-        $controller = new UpgradeRuleCrudController();
-        $fields = iterator_to_array($controller->configureFields('index'));
-
-        $this->assertNotEmpty($fields);
-        $this->assertGreaterThan(0, count($fields));
-    }
-
-    public function testControllerCanBeInstantiated(): void
-    {
-        $controller = new UpgradeRuleCrudController();
-        $this->assertInstanceOf(UpgradeRuleCrudController::class, $controller);
     }
 }

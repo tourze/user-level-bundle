@@ -66,10 +66,20 @@ final class AssignLogTest extends AbstractEntityTestCase
     public function testSetUserWithUserObjectStoresUser(): void
     {
         $log = new AssignLog();
-        $user = new class() implements UserInterface {
-            public function getRoles(): array { return ['ROLE_USER']; }
-            public function eraseCredentials(): void {}
-            public function getUserIdentifier(): string { return 'testuser'; }
+        $user = new class implements UserInterface {
+            public function getRoles(): array
+            {
+                return ['ROLE_USER'];
+            }
+
+            public function eraseCredentials(): void
+            {
+            }
+
+            public function getUserIdentifier(): string
+            {
+                return 'testuser';
+            }
         };
 
         $log->setUser($user);
@@ -147,12 +157,30 @@ final class AssignLogTest extends AbstractEntityTestCase
         $oldLevel->setTitle('VIP1');
         $oldLevel->setValid(true);
 
-        $user = new class() implements UserInterface {
-            public function getRoles(): array { return ['ROLE_USER']; }
-            public function eraseCredentials(): void {}
-            public function getUserIdentifier(): string { return 'testuser'; }
-            public function getId(): string { return '123'; }
-            public function getNickName(): string { return '测试用户'; }
+        $user = new class implements UserInterface {
+            public function getRoles(): array
+            {
+                return ['ROLE_USER'];
+            }
+
+            public function eraseCredentials(): void
+            {
+            }
+
+            public function getUserIdentifier(): string
+            {
+                return 'testuser';
+            }
+
+            public function getId(): string
+            {
+                return '123';
+            }
+
+            public function getNickName(): string
+            {
+                return '测试用户';
+            }
         };
 
         $log->setNewLevel($newLevel);

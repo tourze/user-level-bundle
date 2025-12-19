@@ -17,7 +17,7 @@ use UserLevelBundle\Entity\UserLevelRelation;
 #[RunTestsInSeparateProcesses]
 class UserLevelRelationCrudControllerTest extends AbstractEasyAdminControllerTestCase
 {
-    protected function getControllerService(): UserLevelRelationCrudController
+    protected function getControllerService(): \EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController
     {
         return new UserLevelRelationCrudController();
     }
@@ -45,20 +45,5 @@ class UserLevelRelationCrudControllerTest extends AbstractEasyAdminControllerTes
     public static function provideNewPageFields(): \Generator
     {
         yield 'valid' => ['valid'];
-    }
-
-    public function testConfigureFields(): void
-    {
-        $controller = new UserLevelRelationCrudController();
-        $fields = iterator_to_array($controller->configureFields('index'));
-
-        $this->assertNotEmpty($fields);
-        $this->assertGreaterThan(0, count($fields));
-    }
-
-    public function testControllerCanBeInstantiated(): void
-    {
-        $controller = new UserLevelRelationCrudController();
-        $this->assertInstanceOf(UserLevelRelationCrudController::class, $controller);
     }
 }

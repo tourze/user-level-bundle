@@ -42,11 +42,11 @@ class UpgradeRuleFixtures extends Fixture implements FixtureGroupInterface, Depe
             $platinumLevel = $this->getReference(LevelFixtures::PLATINUM_LEVEL_REFERENCE, Level::class);
             $diamondLevel = $this->getReference(LevelFixtures::DIAMOND_LEVEL_REFERENCE, Level::class);
         } catch (\Exception $e) {
-            // 如果等级引用不存在，创建测试等级
-            $silverLevel = $this->createTestLevel($manager, 2, '银牌会员');
-            $goldLevel = $this->createTestLevel($manager, 3, '金牌会员');
-            $platinumLevel = $this->createTestLevel($manager, 4, '铂金会员');
-            $diamondLevel = $this->createTestLevel($manager, 5, '钻石会员');
+            // 如果等级引用不存在，创建测试等级（使用大数值避免与 LevelFixtures 冲突）
+            $silverLevel = $this->createTestLevel($manager, 300002, '银牌会员');
+            $goldLevel = $this->createTestLevel($manager, 300003, '金牌会员');
+            $platinumLevel = $this->createTestLevel($manager, 300004, '铂金会员');
+            $diamondLevel = $this->createTestLevel($manager, 300005, '钻石会员');
         }
 
         // 创建积分升级规则（银牌等级）

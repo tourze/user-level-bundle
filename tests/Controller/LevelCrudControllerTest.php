@@ -17,7 +17,7 @@ use UserLevelBundle\Entity\Level;
 #[RunTestsInSeparateProcesses]
 class LevelCrudControllerTest extends AbstractEasyAdminControllerTestCase
 {
-    protected function getControllerService(): LevelCrudController
+    protected function getControllerService(): \EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController
     {
         return new LevelCrudController();
     }
@@ -48,20 +48,5 @@ class LevelCrudControllerTest extends AbstractEasyAdminControllerTestCase
     {
         yield 'title' => ['title'];
         yield 'level' => ['level'];
-    }
-
-    public function testConfigureFields(): void
-    {
-        $controller = new LevelCrudController();
-        $fields = iterator_to_array($controller->configureFields('index'));
-
-        $this->assertNotEmpty($fields);
-        $this->assertGreaterThan(0, count($fields));
-    }
-
-    public function testControllerCanBeInstantiated(): void
-    {
-        $controller = new LevelCrudController();
-        $this->assertInstanceOf(LevelCrudController::class, $controller);
     }
 }

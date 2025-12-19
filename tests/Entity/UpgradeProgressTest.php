@@ -39,10 +39,20 @@ final class UpgradeProgressTest extends AbstractEntityTestCase
     public function testSetUserWithUserObjectStoresUser(): void
     {
         $progress = new UpgradeProgress();
-        $user = new class() implements UserInterface {
-            public function getRoles(): array { return ['ROLE_USER']; }
-            public function eraseCredentials(): void {}
-            public function getUserIdentifier(): string { return 'testuser'; }
+        $user = new class implements UserInterface {
+            public function getRoles(): array
+            {
+                return ['ROLE_USER'];
+            }
+
+            public function eraseCredentials(): void
+            {
+            }
+
+            public function getUserIdentifier(): string
+            {
+                return 'testuser';
+            }
         };
 
         $progress->setUser($user);

@@ -11,7 +11,7 @@ use UserLevelBundle\Entity\AssignLog;
  * @extends ServiceEntityRepository<AssignLog>
  */
 #[AsRepository(entityClass: AssignLog::class)]
-class AssignLogRepository extends ServiceEntityRepository
+final class AssignLogRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {

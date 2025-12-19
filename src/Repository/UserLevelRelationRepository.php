@@ -11,7 +11,7 @@ use UserLevelBundle\Entity\UserLevelRelation;
  * @extends ServiceEntityRepository<UserLevelRelation>
  */
 #[AsRepository(entityClass: UserLevelRelation::class)]
-class UserLevelRelationRepository extends ServiceEntityRepository
+final class UserLevelRelationRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {

@@ -17,7 +17,7 @@ use UserLevelBundle\Entity\UpgradeProgress;
 #[RunTestsInSeparateProcesses]
 class UpgradeProgressCrudControllerTest extends AbstractEasyAdminControllerTestCase
 {
-    protected function getControllerService(): UpgradeProgressCrudController
+    protected function getControllerService(): \EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController
     {
         return new UpgradeProgressCrudController();
     }
@@ -45,20 +45,5 @@ class UpgradeProgressCrudControllerTest extends AbstractEasyAdminControllerTestC
     public static function provideNewPageFields(): \Generator
     {
         yield 'value' => ['value'];
-    }
-
-    public function testConfigureFields(): void
-    {
-        $controller = new UpgradeProgressCrudController();
-        $fields = iterator_to_array($controller->configureFields('index'));
-
-        $this->assertNotEmpty($fields);
-        $this->assertGreaterThan(0, count($fields));
-    }
-
-    public function testControllerCanBeInstantiated(): void
-    {
-        $controller = new UpgradeProgressCrudController();
-        $this->assertInstanceOf(UpgradeProgressCrudController::class, $controller);
     }
 }
